@@ -1,0 +1,72 @@
+{
+  "id": "2044513",
+  "name": "移动输液",
+  "font_family": "iconfont",
+  "css_prefix_text": "icon",
+  "description": "",
+  "glyphs": [
+    {
+      "icon_id": "12521026",
+      "name": "刷卡",
+      "font_class": "shuaka",
+      "unicode": "e60b",
+      "unicode_decimal": 58891
+    },
+    {
+      "icon_id": "16959370",
+      "name": "配药",
+      "font_class": "peiyao",
+      "unicode": "e66d",
+      "unicode_decimal": 58989
+    },
+    {
+      "icon_id": "16959371",
+      "name": "穿刺",
+      "font_class": "chuanci",
+      "unicode": "e66e",
+      "unicode_decimal": 58990
+    },
+    {
+      "icon_id": "16959372",
+      "name": "巡回",
+      "font_class": "xunhui",
+      "unicode": "e66f",
+      "unicode_decimal": 58991
+    },
+    {
+      "icon_id": "6232841",
+      "name": "打印",
+      "font_class": "dayin",
+      "unicode": "e614",
+      "unicode_decimal": 58900
+    },
+    {
+      "icon_id": "11296789",
+      "name": "登记",
+      "font_class": "dengji",
+      "unicode": "e60f",
+      "unicode_decimal": 58895
+    },
+    {
+      "icon_id": "13389345",
+      "name": "座位",
+      "font_class": "zuowei",
+      "unicode": "e873",
+      "unicode_decimal": 59507
+    },
+    {
+      "icon_id": "16957326",
+      "name": "logo",
+      "font_class": "logo",
+      "unicode": "e66c",
+      "unicode_decimal": 58988
+    },
+    {
+      "icon_id": "16957297",
+      "name": "logo-icon",
+      "font_class": "logo-icon",
+      "unicode": "e66b",
+      "unicode_decimal": 58987
+    }
+  ]
+}

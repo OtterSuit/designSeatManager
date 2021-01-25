@@ -1,0 +1,197 @@
+<template>
+  <div style="padding:30px">
+    <!-- 头部 -->
+    <myfilters
+      ref="myfilters"
+      :title="title"
+      :content="content"
+      :search-content="true"
+      placeholder="请输入姓名"
+      @contentChange="contentChange"
+    />
+    <el-table :data="showData">
+      <el-table-column type="index" width="100" />
+      <el-table-column label="学号" prop="peopleMessage.id" />
+      <el-table-column label="姓名" prop="peopleMessage.name" />
+      <el-table-column label="座位号" prop="seatMessage" :formatter="idFormat" />
+      <el-table-column label="就坐时间" prop="time" :formatter="seatTime" />
+      <el-table-column
+        label="状态"
+      >
+        <!-- 状态 -->
+        <template slot-scope="scope">
+          <div :class="statusColor(scope.row.status)">
+            <i :class="statusIcon(scope.row.status)" />
+            {{ status(scope.row.status) }}
+          </div>
+        </template>
+      </el-table-column>
+      <!-- 操作 -->
+      <el-table-column>
+        <template slot-scope="scope">
+          <el-dropdown trigger="click" class="dropdown" @command="handleCommand">
+            <span class="el-dropdown-link">
+              <el-button
+                size="mini"
+                icon="el-icon-s-tools"
+              >操作
+                <i class="el-icon-arrow-down el-icon--right" />
+              </el-button>
+            </span>
+            <el-dropdown-menu slot="dropdown">
+              <el-dropdown-item
+                v-if="scope.row.status!=='1'"
+                :command="{
+                  index: scope.$index,
+                  row: scope.row,
+                  action: 'tempLeave'
+                }"
+              >暂时离开</el-dropdown-item>
+              <el-dropdown-item
+                v-else
+                :command="{
+                  index: scope.$index,
+                  row: scope.row,
+                  action: 'comeback'
+                }"
+              >继续使用</el-dropdown-item>
+              <el-dropdown-item
+                :disabled="scope.row.status=='3'"
+                :command="{
+                  index: scope.$index,
+                  row: scope.row,
+                  action: 'endSeat'
+                }"
+              >注销座位</el-dropdown-item>
+            </el-dropdown-menu>
+          </el-dropdown>
+        </template>
+      </el-table-column>
+    </el-table>
+  </div>
+</template>
+
+<script>
+import myfilters from '@/components/myfilters'
+
+export default {
+  components: {
+    myfilters
+  },
+  props: {
+    title: {
+      type: String,
+      default: '一楼'
+    },
+    tableData: {
+      type: Array,
+      default: () => []
+    }
+  },
+  data() {
+    return {
+      showData: []
+    }
+  },
+  computed: {
+    // 计算tableData有几条数据
+    content() {
+      return '共' + this.tableData.length + '条数据'
+    }
+  },
+  watch: {
+    tableData() {
+      this.showData = this.tableData
+    }
+  },
+  mounted() {
+    console.log(this.getTime())
+    this.showData = this.tableData
+  },
+  methods: {
+    idFormat(row, index) {
+      const floorId = {
+        '一楼': 'A',
+        '二楼': 'B',
+        '三楼': 'C',
+        '四楼': 'D',
+        '五楼': 'E'
+      }
+      return floorId[row.seatMessage.floor] + row.seatMessage.id
+    },
+    contentChange(content) {
+      if (content === '') {
+        this.showData = this.tableData
+      } else {
+        const arr = []
+        this.tableData.forEach(item => {
+          if (item.peopleMessage.name === content) {
+            arr.push(item)
+          }
+        })
+        if (arr.length === 0) {
+          this.$refs.myfilters.select.content = ''
+          this.showData = this.tableData
+          this.$message({
+            type: 'error',
+            message: '对不起，查无此人'
+          })
+        } else {
+          this.showData = arr.slice(0, arr.length)
+        }
+      }
+    },
+    handleCommand({ index, row, action }) {
+      this[action](index, row)
+    },
+    tempLeave(index, row) {
+      console.log(row.status)
+      this.$confirm('暂时离开？')
+        .then(_ => {
+          this.$set(row, 'status', '1')
+        })
+        .catch(_ => {})
+    },
+    comeback(index, row) {
+      this.$set(row, 'status', 0)
+    },
+    endSeat(index, row) {
+      // 浅拷贝 让row指向当前行地址为了之后对话框准备
+      this.$confirm('确定离开？')
+        .then(_ => {
+          this.showData.splice(index, 1)
+          this.tableData.splice(index, 1)
+        })
+        .catch(_ => {})
+    },
+    // 状态标签文字
+    status(status) {
+      return status ? '暂时离开' : '正在学习'
+    },
+    // 状态的icon
+    statusIcon(status) {
+      return status ? 'el-icon-time' : 'el-icon-bell'
+    },
+    // 状态颜色
+    statusColor(status) {
+      return status ? 'end-color' : 'success-color'
+    },
+    seatTime(row, index) {
+      return row.time || this.getTime()
+    },
+    getTime() {
+      const date = new Date()
+      return (date.getMonth() + 1) + '-' + date.getDate() + ' ' + date.getHours() + ':' + date.getMinutes()
+    }
+  }
+}
+</script>
+<style lang="scss" type="text/scss" scoped>
+// 状态颜色样式
+.success-color{
+  color:#409EFF
+}
+.end-color{
+  color: #FF4C4C;
+}
+</style>
