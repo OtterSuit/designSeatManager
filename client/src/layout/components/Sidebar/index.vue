@@ -3,8 +3,10 @@
     <div class="company">
       <!-- <img class="pic_logo" src="@/assets/images/logo-icon.png" alt="logo"> -->
       <div class="logo_txt">
+      <!--
         <img class="pic_logo" src="@/assets/images/logo-icon.png" alt="logo">
         <img src="../../../assets/images/logo.png">
+        -->
       </div>
     </div>
     <logo v-if="showLogo" :collapse="isCollapse" />

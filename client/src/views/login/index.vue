@@ -3,8 +3,8 @@
     <el-form ref="loginForm" :model="loginForm" :rules="loginRules" class="login-form" auto-complete="on" label-position="left">
 
       <div class="title-container">
-        <img src="@/assets/images/logo-icon.png" class="title-logo">
-        <img src="../../assets/images/logo@2x.png" class="title">
+        <!--<img src="@/assets/images/logo-icon.png" class="title-logo">
+        <img src="../../assets/images/logo@2x.png" class="title"> -->
       </div>
       <el-row type="flex" class="login-main">
         <el-col>
