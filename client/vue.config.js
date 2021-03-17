@@ -13,8 +13,7 @@ const name = defaultSettings.title || '座位管理系统' // page title
 // use administrator privileges to execute the command line.
 // For example, Mac: sudo npm run
 // You can change the port by the following methods:
-// port = 8094 npm run dev OR npm run dev --port = 8094
-const port = process.env.port || process.env.npm_config_port || 8094 // dev port
+const port = process.env.port || process.env.npm_config_port || 8080 // dev port
 // All configuration item explanations can be find in https://cli.vuejs.org/config/
 module.exports = {
   /**

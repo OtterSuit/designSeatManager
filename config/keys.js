@@ -1,6 +1,6 @@
-module.exports ={
-    mongoURI:"mongodb+srv://author:libray13579@cluster0.m12tr.mongodb.net/library?retryWrites=true&w=majority",
-    secretOrKey:"secret"
+module.exports = {
+    mongoURI: "mongodb+srv://author:libray13579@cluster0.m12tr.mongodb.net/library?retryWrites=true&w=majority",
+    secretOrKey: "secret"
 }
 
 
