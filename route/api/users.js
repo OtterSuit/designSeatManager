@@ -50,7 +50,8 @@ router.post("/register", (req,res) => {
                     email: req.body.email,
                     college: req.body.college,
                     avatar,
-                    password: req.body.password
+                    password: req.body.password,
+                    identity: req.body.identity
                 })
 
                 bcrypt.genSalt(10, function(err,salt){
@@ -98,9 +99,9 @@ router.post("/login", (req,res) => {
                             const rule = {id: user.id,name: user.name,schoolID: user.schoolID }
                             jwt.sign(rule, keys.secretOrKey, {expiresIn: 7200}, (err,token) => {
                                 if(err) throw err;
-                            res.json({
+                                res.json({
                                     success: true,
-                                    token: "Bearer "+token
+                                    token: "Bearer " + token
                                 })
                             })
                             //jwt.sign("规则","加密名字","{过期时间}","箭头函数")
@@ -123,7 +124,8 @@ router.post("/login", (req,res) => {
             schoolID: req.user.schoolID,
             name: req.user.name,
             email: req.user.email,
-            college: req.user.college
+            college: req.user.college,
+            identity: req.user.identity
         });
     })
 
