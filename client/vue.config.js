@@ -35,6 +35,16 @@ module.exports = {
       warnings: false,
       errors: true
     },
+    proxy: {
+      '/api': {
+        target: 'http://localhost:9999/api', // 这里写的是访问接口的域名和端口号
+        changeOrigin: true, // 必须加上这个才能跨域请求
+        ws: true,
+        pathRewrite: { // 重命名
+          '^/api': ''
+        }
+      }
+    },
     before: require('./mock/mock-server.js')
   },
   configureWebpack: () => {
