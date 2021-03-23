@@ -14,6 +14,11 @@ export const constantRoutes = [
     hidden: true
   },
   {
+    path: '/register',
+    component: () => import('@/views/register/index'),
+    hidden: true
+  },
+  {
     path: '/404',
     component: () => import('@/views/404'),
     hidden: true
@@ -32,6 +37,7 @@ export const constantRoutes = [
   {
     path: '/base',
     component: Layout,
+    redirect: '/base/base',
     children: [
       {
         path: 'base',
@@ -44,6 +50,7 @@ export const constantRoutes = [
   {
     path: '/registration',
     component: Layout,
+    redirect: '/registration/registration',
     children: [
       {
         path: 'registration',
@@ -56,6 +63,7 @@ export const constantRoutes = [
   {
     path: '/floor',
     component: Layout,
+    redirect: '/floor/floor',
     children: [
       {
         path: 'floor',
@@ -69,6 +77,7 @@ export const constantRoutes = [
   {
     path: '/seatManage',
     component: Layout,
+    redirect: '/seatManage/seatManage',
     children: [
       {
         path: 'seatManage',
@@ -81,6 +90,7 @@ export const constantRoutes = [
   {
     path: '/report',
     component: Layout,
+    redirect: '/report/report',
     children: [
       {
         path: 'report',
@@ -99,49 +109,12 @@ export const constantRoutes = [
     hidden: true,
     children: [...systemSettings]
   },
-  {
-    path: '/company',
-    component: Layout,
-    children: [
-      {
-        path: 'company',
-        name: 'Company',
-        component: () => import('@/views/peiyao'),
-        meta: { title: '配药', icon: 'iconpeiyao' }
-      },
-      {
-        path: 'medicaldetail',
-        name: 'medicaldetail',
-        component: () => import('@/views/peiyao/medicaldetail.vue'),
-        meta: { title: '配药详情' },
-        hidden: true
-      }
-    ]
-  },
-  {
-    path: '/retrieve',
-    component: Layout,
-    children: [
-      {
-        path: 'retrieve',
-        name: 'Retrieve',
-        component: () => import('@/views/xunhui'),
-        meta: { title: '巡回', icon: 'iconxunhui' }
-      },
-      {
-        path: 'retrievedetail',
-        name: 'retrievedetail',
-        component: () => import('@/views/xunhui/retrievedetail'),
-        meta: { title: '巡回详情', icon: 'iconxunhui' },
-        hidden: true
-      }
-    ]
-  },
   // 404 page must be placed at the end !!!
   { path: '*', redirect: '/404', hidden: true }
 ]
 
 const createRouter = () => new Router({
+  mode: 'history',
   scrollBehavior: () => ({ y: 0 }),
   routes: constantRoutes
 })

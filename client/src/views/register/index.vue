@@ -3,8 +3,8 @@
     <el-form ref="loginForm" :model="loginForm" :rules="loginRules" class="login-form" auto-complete="on" label-position="left">
 
       <div class="title-container">
-        <img class="title-logo" src="@/assets/images/logo-icon.png" alt="logo">
-        <span class="title">座位管理<span style="margin-left: 5px">系统</span></span>
+        <!--<img src="@/assets/images/logo-icon.png" class="title-logo">
+        <img src="../../assets/images/logo@2x.png" class="title"> -->
       </div>
       <el-row type="flex" class="login-main">
         <el-col>
@@ -240,19 +240,15 @@ $light_gray:#eee;
     background-image: url("../../assets/images/loginTop.png");
     background-size: cover;
     padding: 28px 32px;
+    // }
     .title {
-      font-size: 45px;
-      line-height: 45px;
-      letter-spacing: 20px;
-      color: #d1dde3;
       height: 40px;
       vertical-align: middle;
     }
     .title-logo {
       height: 48px;
       vertical-align: middle;
-      margin-left: 20px;
-      margin-right: 25px;
+      margin-right: 15px;
     }
   }
 

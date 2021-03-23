@@ -1,12 +1,9 @@
 <template>
   <div :class="{'has-logo':showLogo}">
     <div class="company">
-      <!-- <img class="pic_logo" src="@/assets/images/logo-icon.png" alt="logo"> -->
       <div class="logo_txt">
-      <!--
         <img class="pic_logo" src="@/assets/images/logo-icon.png" alt="logo">
-        <img src="../../../assets/images/logo.png">
-        -->
+        <span class="logo_title">座位管理<span style="margin-left: 5px">系统</span></span>
       </div>
     </div>
     <logo v-if="showLogo" :collapse="isCollapse" />
@@ -76,11 +73,17 @@ export default {
   // display: flex;
 }
 .pic_logo {
-  // width: 45px;
   height: 45px;
+  line-height: 45;
   vertical-align: -webkit-baseline-middle;
   margin-left: -10px;
-  // margin-top: 8px;
+  margin-right: 10px;
+}
+.logo_title {
+  font-size: 24px;
+  line-height: 45px;
+  font-weight: 700;
+  vertical-align: sub;
 }
 .logo_txt {
   padding-left: 24px;

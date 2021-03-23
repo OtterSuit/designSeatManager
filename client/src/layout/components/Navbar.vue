@@ -5,11 +5,6 @@
     <breadcrumb class="breadcrumb-container" />
     <div class="right-menu">
       <i class="el-icon-refresh-right icon" style="cursor:pointer" @click="refresh()" />
-      <router-link to="/systemSettings/myTodo">
-        <el-badge :value="value" :max="99" class="item">
-          <i class="iconfont icon-lingdang icon" />
-        </el-badge>
-      </router-link>
       <el-dropdown class="avatar-container" trigger="click">
         <div class="avatar-wrapper">
           <img class="pic_user" src="@/assets/images/meili.png" alt="user">
@@ -27,22 +22,11 @@
               我的信息
             </el-dropdown-item>
           </router-link>
-          <router-link to="/systemSettings/purview">
+          <router-link to="/systemSettings/password">
             <el-dropdown-item>
-              权限管理
+              修改密码
             </el-dropdown-item>
           </router-link>
-          <router-link to="/systemSettings/register">
-            <el-dropdown-item>
-              账号设置
-            </el-dropdown-item>
-          </router-link>
-          <!-- <a target="_blank" href="https://github.com/PanJiaChen/vue-admin-template/">
-            <el-dropdown-item>Github</el-dropdown-item>
-          </a>
-          <a target="_blank" href="https://panjiachen.github.io/vue-element-admin-site/#/">
-            <el-dropdown-item>Docs</el-dropdown-item>
-          </a> -->
           <el-dropdown-item divided @click.native="logout">
             <span style="display:block;">退出登录</span>
           </el-dropdown-item>
@@ -56,13 +40,13 @@
 import { mapGetters } from 'vuex'
 import Breadcrumb from '@/components/Breadcrumb'
 import Hamburger from '@/components/Hamburger'
-// import { getTodo } from '@/api/systemSettings/todo'
 
 export default {
   components: {
     Breadcrumb,
     Hamburger
   },
+  inject: ['reload'],
   data() {
     return {
       value: ''
@@ -86,14 +70,15 @@ export default {
     //   })
     // },
     refresh() {
-      this.$router.go(0)
+      this.reload()
     },
     toggleSideBar() {
       this.$store.dispatch('app/toggleSideBar')
     },
     async logout() {
       await this.$store.dispatch('user/logout')
-      this.$router.push(`/login?redirect=${this.$route.fullPath}`)
+      this.$router.push(`/login`)
+      // this.$router.push(`/login?redirect=${this.$route.fullPath}`)
     }
   }
 }
