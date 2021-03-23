@@ -24,6 +24,10 @@ const UserSchema=new Schema({
 	avatar: { //头像
 		type: String,
 	},
+	identity:{ //管理员标识
+		type:String,
+		required:true
+	},
 	date: {
 		type: Date,
 		default: Date.now//创建的时候时间是多少就是多少		

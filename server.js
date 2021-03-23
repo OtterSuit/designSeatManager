@@ -13,10 +13,12 @@ app.get("/", (req,res) => {
 })
 
 // 使用应用路由
-//hellotest.js
+// hellotest.js
 const hellotest = require("./route/api/hellotest.js")
 // users.js
 const users = require("./route/api/users")
+// seat.js
+const seat = require("./route/api/seat")
 
 // 使用body-parser中间件
 app.use(bodyParser.urlencoded({extended: false}));
@@ -25,7 +27,9 @@ app.use(bodyParser.json());
 
 //使用routes
 app.use("/api/hellotest", hellotest);
-app.use("/api/users", users)
+app.use("/api/users", users);
+app.use("/api/seat", seat);
+
 
 //DB config
 const db = require("./config/keys.js").mongoURI;
