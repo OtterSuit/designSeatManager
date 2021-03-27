@@ -49,6 +49,13 @@ router.post("/register", (req,res) => {
 })
 
 
+//改变座位状态 思路 
+/**
+ * 调用post接口 使用update更新的方法 更新表修改对应座位状态
+ */
+
+
+
 // 座位查询
 //$route GET api/seat/find
 //@desc 返回请求的json数据

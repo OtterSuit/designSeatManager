@@ -19,6 +19,8 @@ const hellotest = require("./route/api/hellotest.js")
 const users = require("./route/api/users")
 // seat.js
 const seat = require("./route/api/seat")
+// profiles.js
+const profiles = require("./route/api/profiles")
 
 // 使用body-parser中间件
 app.use(bodyParser.urlencoded({extended: false}));
@@ -29,7 +31,7 @@ app.use(bodyParser.json());
 app.use("/api/hellotest", hellotest);
 app.use("/api/users", users);
 app.use("/api/seat", seat);
-
+app.use("/api/profiles",profiles)
 
 //DB config
 const db = require("./config/keys.js").mongoURI;
