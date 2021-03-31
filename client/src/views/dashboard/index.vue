@@ -216,6 +216,7 @@ export default {
     }
   },
   created() {
+    console.log(this.$router)
     getDashboard().then(res => {
       console.log(res)
       if (res.code === 20000) {

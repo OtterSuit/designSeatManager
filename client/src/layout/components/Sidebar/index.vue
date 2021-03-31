@@ -34,10 +34,24 @@ export default {
   components: { SidebarItem, Logo },
   computed: {
     ...mapGetters([
-      'sidebar'
+      'sidebar',
+      'identity'
     ]),
     routes() {
-      return this.$router.options.routes
+      let routes = this.$router.options.routes
+      if(this.identity !== 'admin') {
+        routes.forEach(route => {
+          if(route.children) {
+            route.children = route.children.filter(item => {
+              if(item.meta.identity !== 'admin') {
+                console.log(item.meta);
+                return route
+              }
+            })
+          }
+        })
+      }
+      return routes
     },
     activeMenu() {
       const route = this.$route

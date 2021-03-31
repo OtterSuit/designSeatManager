@@ -11,17 +11,6 @@
       @exportHTML="exportHTML"
       @searchClick="searchClick"
     >
-      <!-- 选择护士 -->
-      <!-- <template slot="expand">
-        <el-select v-model="nurseSelect" placeholder="请选择科室" @change="nurseChoose">
-          <el-option
-            v-for="item in optionsnurse"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value"
-          />
-        </el-select>
-      </template> -->
       <template slot="extent">
         <!-- 选择查询模式 -->
         <el-col :span="5">

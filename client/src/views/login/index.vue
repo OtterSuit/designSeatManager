@@ -8,7 +8,7 @@
       </div>
       <el-row type="flex" class="login-main">
         <el-col>
-          <div class="login-title">请登陆</div>
+          <div class="login-title">请登录</div>
           <el-form-item prop="username">
             <span class="svg-container">
               <i class="el-icon-user" />
@@ -39,74 +39,71 @@
               auto-complete="on"
               @keyup.enter.native="handleLogin"
             />
-            <span class="show-pwd" @click="showPwd">
+            <span class="show-pwd" @mousedown="showPwd" @mouseup="hiddenPwd">
               <!-- <svg-icon :icon-class="passwordType === 'password' ? 'eye' : 'eye-open'" /> -->
               <i :class="passwordType === 'password' ? 'el-icon-edit' : 'el-icon-search'" />
             </span>
           </el-form-item>
 
           <el-button :loading="loading" type="primary" style="width:150px;height:48px;margin-bottom:30px;" @click.native.prevent="handleLogin">登录</el-button>
-          <span class="forget">忘记密码？</span>
+          <el-button :loading="loading" style="width:150px;height:48px;margin:0 0 30px 100px;" @click.native.prevent="handleRegister">注册</el-button>
+          <!-- <span class="forget">忘记密码？</span> -->
         </el-col>
       </el-row>
-      <!-- <div class="tips">
-        <span style="margin-right:20px;">username: admin</span>
-        <span> password: any</span>
-      </div> -->
-
     </el-form>
   </div>
 </template>
 
 <script>
-import { validUsername } from '@/utils/validate'
+// import { validUsername } from '@/utils/validate'
 
 export default {
   name: 'Login',
   data() {
-    const validateUsername = (rule, value, callback) => {
-      if (!validUsername(value)) {
-        callback(new Error('Please enter the correct user name'))
-      } else {
-        callback()
-      }
-    }
+    // const validateUsername = (rule, value, callback) => {
+    //   if (!validUsername(value)) {
+    //     callback(new Error('Please enter the correct user name'))
+    //   } else {
+    //     callback()
+    //   }
+    // }
     const validatePassword = (rule, value, callback) => {
       if (value.length < 6) {
-        callback(new Error('The password can not be less than 6 digits'))
+        callback(new Error('密码不能少于6位数'))
       } else {
         callback()
       }
     }
     return {
       loginForm: {
-        username: 'admin',
-        password: '111111'
+        username: '1708090101',
+        password: '123456'
       },
       loginRules: {
-        username: [{ required: true, trigger: 'blur', validator: validateUsername }],
+        // username: [{ required: true, trigger: 'blur', validator: validateUsername }],
         password: [{ required: true, trigger: 'blur', validator: validatePassword }]
       },
       loading: false,
-      passwordType: 'password',
-      redirect: undefined
+      passwordType: 'password'
+      // redirect: undefined
     }
   },
-  watch: {
-    $route: {
-      handler: function(route) {
-        this.redirect = route.query && route.query.redirect
-      },
-      immediate: true
-    }
-  },
+  // watch: {
+  //   $route: {
+  //     handler: function(route) {
+  //       this.redirect = route.query && route.query.redirect
+  //     },
+  //     immediate: true
+  //   }
+  // },
   methods: {
     showPwd() {
-      if (this.passwordType === 'password') {
-        this.passwordType = ''
-      } else {
-        this.passwordType = 'password'
-      }
+      this.passwordType = ''
+      window.addEventListener('mouseup', this.hiddenPwd)
+    },
+    hiddenPwd() {
+      this.passwordType = 'password'
+      window.removeEventListener('mouseup', this.hiddenPwd)
       this.$nextTick(() => {
         this.$refs.password.focus()
       })
@@ -116,9 +113,10 @@ export default {
         if (valid) {
           this.loading = true
           this.$store.dispatch('user/login', this.loginForm).then(() => {
-            this.$router.push({ path: this.redirect || '/' })
+            this.$router.push({ path: '/' })
             this.loading = false
-          }).catch(() => {
+          }).catch((err) => {
+            console.log(err);
             this.loading = false
           })
         } else {
@@ -126,6 +124,9 @@ export default {
           return false
         }
       })
+    },
+    handleRegister() {
+      this.$router.push({ path: '/register' })
     }
   }
 }

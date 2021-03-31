@@ -4,6 +4,8 @@ import APIconfig from '@/api/APIconfig'
 // import router from '../router'
 // import store from '../store'
 // import Cookies from 'js-cookie'
+
+import { getToken } from '@/utils/auth'
 // import { getToken, getExpireTime, removeToken, setToken, setExpireTime } from '@/utils/auth'
 // import { compareTime } from '@/utils/index'
 // import { Message } from 'element-ui'
@@ -129,7 +131,7 @@ axios.interceptors.request.use(
 // )
 axios.interceptors.response.use(
   (response) => {
-    // console.log(response)
+    console.log(response.data)
     // if (response.data.code) {
     //   if (response.data.code !== '200' || response.data.data.busiCode !== '1') {
     //     Message.error(response.data.data.msg)
@@ -145,7 +147,7 @@ axios.interceptors.response.use(
 )
 export function api(data) {
   const { url, params, method } = data
-  //   const token = getToken()
+  const token = getToken()
   let ContentType = 'application/x-www-form-urlencoded; charset=UTF-8'
   if (data.ContentType && data.ContentType === 'json') {
     ContentType = 'application/json;charset=UTF-8'
@@ -153,8 +155,8 @@ export function api(data) {
   const newHeader = {
     // 'Content-Type': 'application/x-www-form-urlencoded',
     // 'Content-Type': 'application/json;charset=UTF-8',
-    'Content-Type': ContentType
-    // Authorization: `Bearer ${token}`
+    'Content-Type': ContentType,
+    Authorization: token
   }
   //   let paramsSerializer = null
   //   if (data.paramsSerializer && data.paramsSerializer === true) {
@@ -169,7 +171,7 @@ export function api(data) {
       method,
       url: newApi,
       cancelToken: source.token,
-      timeout: 30000,
+      timeout: 5000,
       data: params,
       params: method.toLocaleLowerCase() === 'get' ? params : {},
       headers: newHeader

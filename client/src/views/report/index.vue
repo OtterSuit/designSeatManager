@@ -2,12 +2,8 @@
   <div>
     <div class="tabs-main">
       <el-tabs v-model="activeName" tab-position="left" style="height:100%">
-        <el-tab-pane label="工作记录查询" name="workloadQuery" />
-        <el-tab-pane label="输液人数统计" name="infusionsNum" />
-        <el-tab-pane label="个人工作量统计" name="personalWorkload" />
-        <el-tab-pane label="输液室工作量统计" name="infusionRoom" />
-        <!-- <el-tab-pane label="接单数统计" name="ordersNum" /> -->
-        <!-- <el-tab-pane label="大输液统计" name="daTongYeNum" /> -->
+        <el-tab-pane label="学院申请统计" name="collegeReport" />
+        <el-tab-pane label="楼层申请统计" name="floorReport" />
       </el-tabs>
     </div>
     <div class="transform">
@@ -18,27 +14,20 @@
   </div>
 </template>
 <script>
-import workloadQuery from './workloadQuery'
-import infusionsNum from './infusionsNum'
-import personalWorkload from './personalWorkload'
-import infusionRoom from './infusionRoom'
-// import ordersNum from './ordersNum'
-// import daTongYeNum from './daTongYeNum'
+import collegeReport from './collegeReport'
+import floorReport from './floorReport'
+
 export default {
   components: {
-    workloadQuery, infusionsNum, personalWorkload, infusionRoom
+    collegeReport, floorReport
     //  ordersNum, daTongYeNum
   },
   data() {
     return {
-      activeName: 'workloadQuery',
+      activeName: 'collegeReport',
       componentsList: {
-        workloadQuery: 'workloadQuery',
-        infusionsNum: 'infusionsNum',
-        personalWorkload: 'personalWorkload',
-        infusionRoom: 'infusionRoom'
-        // ordersNum: 'ordersNum',
-        // daTongYeNum: 'daTongYeNum'
+        collegeReport: 'collegeReport',
+        floorReport: 'floorReport'
       }
     }
   },

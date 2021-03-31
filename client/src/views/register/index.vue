@@ -8,7 +8,7 @@
       </div>
       <el-row type="flex" class="login-main">
         <el-col>
-          <div class="login-title">请登陆</div>
+          <div class="login-title">请登录</div>
           <el-form-item prop="username">
             <span class="svg-container">
               <i class="el-icon-user" />

@@ -43,7 +43,7 @@ export const constantRoutes = [
         path: 'base',
         name: 'Base',
         component: () => import('@/views/base/index'),
-        meta: { title: '基础数据', icon: 'iconpeiyao' }
+        meta: { title: '基础数据', icon: 'iconpeiyao', identity: 'admin' }
       }
     ]
   },
