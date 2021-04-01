@@ -29,17 +29,18 @@ import { mapGetters } from 'vuex'
 import Logo from './Logo'
 import SidebarItem from './SidebarItem'
 import variables from '@/styles/variables.scss'
+import Cookies from 'js-cookie';
 
 export default {
   components: { SidebarItem, Logo },
   computed: {
     ...mapGetters([
       'sidebar',
-      'identity'
     ]),
     routes() {
-      let routes = this.$router.options.routes
-      if(this.identity !== 'admin') {
+      let routes = [...this.$router.options.routes]
+      console.log(routes);
+      if(Cookies.get('Identity') !== 'admin') {
         routes.forEach(route => {
           if(route.children) {
             route.children = route.children.filter(item => {
@@ -51,6 +52,7 @@ export default {
           }
         })
       }
+      console.log(this.$router.options.routes);
       return routes
     },
     activeMenu() {

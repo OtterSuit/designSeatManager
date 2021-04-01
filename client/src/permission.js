@@ -5,6 +5,7 @@ import NProgress from 'nprogress' // progress bar
 import 'nprogress/nprogress.css' // progress bar style
 import { getToken } from '@/utils/auth' // get token from cookie
 import getPageTitle from '@/utils/get-page-title'
+import Cookies from 'js-cookie'
 
 NProgress.configure({ showSpinner: false }) // NProgress Configuration
 
@@ -25,16 +26,22 @@ router.beforeEach(async(to, from, next) => {
       // if is logged in, redirect to the home page
       next({ path: '/' })
       NProgress.done()
-    } else if(to.meta.identity === 'admin' && store.getters.identity !== 'admin'){
-      next({path: '/404'})
     } else {
       const hasGetUserInfo = store.getters.name
+      console.log(hasGetUserInfo);
+
       if (hasGetUserInfo) {
+        if(to.meta.identity === 'admin' && store.getters.identity !== 'admin' && Cookies.get('Identity') !== 'admin'){
+          next({path: '/404'})
+        }
         next()
       } else {
         try {
           // get user info
           const user = await store.dispatch('user/getInfo')
+          if(to.meta.identity === 'admin' && user.identity !== 'admin' && Cookies.get('Identity') !== 'admin'){
+            next({path: '/404'})
+          }
           next()
         } catch (error) {
           // remove token and go to login page to re-login

@@ -2,6 +2,8 @@ import { login, logout, getInfo } from '@/api/user'
 import { getToken, setToken, removeToken } from '@/utils/auth'
 import { resetRouter } from '@/router'
 import api from '@/api'
+import jwt_decode from "jwt-decode";
+import Cookies from 'js-cookie';
 
 const getDefaultState = () => {
   return {
@@ -41,6 +43,10 @@ const actions = {
         const { token } = response
         commit('SET_TOKEN', token)
         setToken(token)
+        const decoded = jwt_decode(token)
+        const { identity } = decoded
+        commit('SET_IDENTITY', identity)
+        Cookies.set('Identity', identity)
         // api.getInfo().then(res => {
         //   console.log(res);
         // })
@@ -66,6 +72,8 @@ const actions = {
         commit('SET_NAME', name)
         commit('SET_AVATAR', avatar)
         commit('SET_IDENTITY', identity)
+        Cookies.set('Identity', identity)
+
 
         resolve(data)
       }).catch(error => {
@@ -81,6 +89,7 @@ const actions = {
       removeToken() // must remove  token  first
       resetRouter()
       commit('RESET_STATE')
+      Cookies.remove('Identity')
       // resolve()
       // }).catch(error => {
       //   reject(error)

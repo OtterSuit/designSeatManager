@@ -97,7 +97,7 @@ router.post("/login", (req,res) => {
             bcrypt.compare(password,user.password)
                   .then(isMatch => {
                         if(isMatch){
-                            const rule = {id: user.id,name: user.name,schoolID: user.schoolID }
+                            const rule = {id: user.id,name: user.name,schoolID: user.schoolID, identity: user.identity }
                             jwt.sign(rule, keys.secretOrKey, {expiresIn: 7200}, (err,token) => {
                                 if(err) throw err;
                                 res.json({
