@@ -43,8 +43,7 @@ const actions = {
         const { token } = response
         commit('SET_TOKEN', token)
         setToken(token)
-        const decoded = jwt_decode(token)
-        const { identity } = decoded
+        const { identity } = jwt_decode(token)
         commit('SET_IDENTITY', identity)
         Cookies.set('Identity', identity)
         // api.getInfo().then(res => {

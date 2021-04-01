@@ -6,6 +6,7 @@ import 'nprogress/nprogress.css' // progress bar style
 import { getToken } from '@/utils/auth' // get token from cookie
 import getPageTitle from '@/utils/get-page-title'
 import Cookies from 'js-cookie'
+import jwt_decode from "jwt-decode";
 
 NProgress.configure({ showSpinner: false }) // NProgress Configuration
 
@@ -19,9 +20,9 @@ router.beforeEach(async(to, from, next) => {
   document.title = getPageTitle(to.meta.title)
 
   // determine whether the user has logged in
-  const hasToken = getToken()
+  const token = getToken()
 
-  if (hasToken) {
+  if (token) {
     if (to.path === '/login') {
       // if is logged in, redirect to the home page
       next({ path: '/' })
@@ -30,25 +31,33 @@ router.beforeEach(async(to, from, next) => {
       const hasGetUserInfo = store.getters.name
       console.log(hasGetUserInfo);
 
-      if (hasGetUserInfo) {
-        if(to.meta.identity === 'admin' && store.getters.identity !== 'admin' && Cookies.get('Identity') !== 'admin'){
-          next({path: '/404'})
-        }
-        next()
-      } else {
-        try {
-          // get user info
-          const user = await store.dispatch('user/getInfo')
-          if(to.meta.identity === 'admin' && user.identity !== 'admin' && Cookies.get('Identity') !== 'admin'){
+      const  { exp } = jwt_decode(token)
+      const currentTime = Date.now() / 1000
+      if(exp < currentTime) {
+        await store.dispatch('user/resetToken')
+        next({path: '/login'})
+        Message.error('登陆已过期，请重新登陆')
+      }else{
+        if (hasGetUserInfo) {
+          if(to.meta.identity === 'admin' && store.getters.identity !== 'admin' && Cookies.get('Identity') !== 'admin'){
             next({path: '/404'})
           }
           next()
-        } catch (error) {
-          // remove token and go to login page to re-login
-          await store.dispatch('user/resetToken')
-          Message.error(error || 'Has Error')
-          next(`/login?redirect=${to.path}`)
-          NProgress.done()
+        } else {
+          try {
+            // get user info
+            const user = await store.dispatch('user/getInfo')
+            if(to.meta.identity === 'admin' && user.identity !== 'admin' && Cookies.get('Identity') !== 'admin'){
+              next({path: '/404'})
+            }
+            next()
+          } catch (error) {
+            // remove token and go to login page to re-login
+            await store.dispatch('user/resetToken')
+            Message.error(error || 'Has Error')
+            next(`/login?redirect=${to.path}`)
+            NProgress.done()
+          }
         }
       }
     }

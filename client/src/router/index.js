@@ -56,7 +56,7 @@ export const constantRoutes = [
         path: 'registration',
         name: 'Registration',
         component: () => import('@/views/registration'),
-        meta: { title: '人员登记', icon: 'icondengji' }
+        meta: { title: '人员登记', icon: 'icondengji', identity: 'admin' }
       }
     ]
   },
@@ -83,7 +83,7 @@ export const constantRoutes = [
         path: 'seatManage',
         name: 'SeatManage',
         component: () => import('@/views/seatManage'),
-        meta: { title: '座位管理', icon: 'iconzuowei' }
+        meta: { title: '座位管理', icon: 'iconzuowei', identity: 'admin' }
       }
     ]
   },
@@ -96,7 +96,7 @@ export const constantRoutes = [
         path: 'report',
         name: 'Report',
         component: () => import('@/views/report'),
-        meta: { title: '统计报表', icon: 'el-icon-s-data' }
+        meta: { title: '统计报表', icon: 'el-icon-s-data', identity: 'admin' }
       }
     ]
   },
