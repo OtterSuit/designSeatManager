@@ -51,9 +51,59 @@ router.post("/register", (req,res) => {
 
 //改变座位状态 思路 
 /**
- * 调用post接口 使用update更新的方法 更新表修改对应座位状态
+ * 调用post接口 使用updateOne更新的方法 更新表修改对应座位状态 并且前端做限制
  */
 
+//座位状态修改
+//$route POST api/seat/status
+//@desc 修改修改状态
+//@access public 
+ router.post("/status", (req,res) => {
+    console.log(req.body)
+    const seatFileFields = {}
+    if(req.body.status) 
+    {
+        seatFileFields.status = req.body.status //获得前端给的值 给seatfileFields对象赋值
+    }
+    console.log(seatFileFields)
+    // Seat.update({status:'222233333'},{$set:seatFileFields})
+    //     .then(res=>{
+    //         console.log(res)
+    //     })
+    const whereStr = {seatID:req.body.seatID};  // 查询条件
+    const updateStr = seatFileFields
+    Seat.updateOne(whereStr, updateStr, function(err, ress) {
+        if (err) throw err;
+        console.log("更新成功");
+        const result = {}
+        result.code = 200
+        result.msg = "座位状态改变成功"
+        res.json(result)
+    })
+
+
+
+    // 查询数据库是否座位编号
+    // Seat.findOne({seatID: req.body.seatID})
+    //     .then((seat) => {
+    //         console.log(seat)
+    //         seat.updateOne({status:'1'},{$set:{status:'2222'}})
+    //             .then(res =>{
+    //                 console.log(res)
+    //             })
+            // if(seat){
+            //     console.log(seat)
+            //     //有这个座位
+            //     // ({ $set: seatFileFields }, { new: true })
+            //     seat.update({status:'1'},{ status:req.body.status }, { new: true })
+            //     .then(
+            //         seat => res.json(seat)
+            //         );
+            // }else{
+            //     res.json("err")
+            // }
+        // })
+})
 
 
 // 座位查询
@@ -64,6 +114,7 @@ router.get("/find",(req,res)=>{
     Seat.find()
     .then(result =>{
         res.json({
+            code:200,
             result
         })
     })

@@ -1,3 +1,4 @@
+const { json } = require("body-parser");
 const express = require("express");
 const router = express.Router();
 const mongoose = require("mongoose")
@@ -32,10 +33,10 @@ router.post("/",passport.authenticate("jwt",{session:false}),(req,res)=>{ //在p
 	if(req.body.handle) profileFields.handle = req.body.handle //如果有 handle 则给profileFields对象赋值
 	if(req.body.grade) profileFields.grade = req.body.grade
 
-
 	
-	 Profile.findOne({ user: req.user.id }).then(profile => {
-    if (profile) {
+	Profile.findOne({ user: req.user.id })
+		.then(profile => {
+    		if (profile) {
       // 用户信息存在, 执行更新方法
       Profile.findOneAndUpdate({ user: req.user.id }, { $set: profileFields }, { new: true }).then(profile => res.json(profile));
     } else {
@@ -46,7 +47,8 @@ router.post("/",passport.authenticate("jwt",{session:false}),(req,res)=>{ //在p
           res.status(400).json(errors);
         }
 
-        new Profile(profileFields).save().then(profile => res.json(profile));
+        new Profile(profileFields).save()
+		.then(profile => res.json(profile));
       })
     }
   })
@@ -64,11 +66,16 @@ router.get("/current",passport.authenticate("jwt",{session:false}),(req,res)=>{ 
 	Profile.findOne({user:req.user.id}).populate('user',["name","college"])
 	.then((profile)=>{
 		if(!profile){
-			errors.noprofile="该用户的信息不存在!!!~~"
+			errors.noprofile="该用户的信息不存在!!!"
             //res.json(req.user.id)//测试成功 拿到user.id进行比较
             res.json(res)
 			return res.status(404).json(errors)
 		}
+		profile.code = 200
+		// JSON.parse(profile)
+		// console.log(JSON.parse(profile))
+		console.log( profile instanceof Object )
+		console.log(profile)
 		res.json(profile)
 	}).catch(err => res.status(404).json(err))
 })
