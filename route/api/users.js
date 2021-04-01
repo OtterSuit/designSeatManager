@@ -53,7 +53,6 @@ router.post("/register", (req,res) => {
                     password: req.body.password,
                     identity: req.body.identity
                 })
-
                 bcrypt.genSalt(10, function(err,salt){
 					bcrypt.hash(newUser.password,salt, function(err,hash) {
 						//Store hash in your password DB
@@ -62,7 +61,7 @@ router.post("/register", (req,res) => {
 						newUser.password = hash;
 						
 						newUser.save()
-							.then(user => res.json(user))
+							.then(user =>res.json(user))
 							.catch(err => console.log(err))
 					});
 				});
@@ -77,7 +76,7 @@ router.post("/register", (req,res) => {
 router.post("/login", (req,res) => {
     const {errors,isValid} = validateLoginInput(req.body)
 
-    console.log("req")
+    // console.log(req)
     // 判断isValid是否通过
     if(!isValid) {
         return res.status(400).json(errors);
@@ -101,6 +100,7 @@ router.post("/login", (req,res) => {
                             jwt.sign(rule, keys.secretOrKey, {expiresIn: 7200}, (err,token) => {
                                 if(err) throw err;
                                 res.json({
+                                    code:200, //成功标识
                                     success: true,
                                     token: "Bearer " + token
                                 })
@@ -115,12 +115,13 @@ router.post("/login", (req,res) => {
 })
 
 
-    //用户拿到了token
-    //$route GET api/users/current
-    //@desc return current user
-    //@access Private
-    router.get("/current", passport.authenticate("jwt", {session: false}), (req,res) => {
+//用户拿到了token
+//$route GET api/users/current
+//@desc return current user
+//@access Private
+router.get("/current", passport.authenticate("jwt", {session: false}), (req,res) => {
         res.json({
+            code:200,
             id: req.user.id,
             schoolID: req.user.schoolID,
             name: req.user.name,
