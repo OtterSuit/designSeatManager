@@ -71,11 +71,6 @@ router.get("/current",passport.authenticate("jwt",{session:false}),(req,res)=>{ 
             res.json(res)
 			return res.status(404).json(errors)
 		}
-		profile.code = 200
-		// JSON.parse(profile)
-		// console.log(JSON.parse(profile))
-		console.log( profile instanceof Object )
-		console.log(profile)
 		res.json(profile)
 	}).catch(err => res.status(404).json(err))
 })

@@ -97,7 +97,7 @@ router.post("/login", (req,res) => {
                   .then(isMatch => {
                         if(isMatch){
                             const rule = {id: user.id,name: user.name,schoolID: user.schoolID, identity: user.identity }
-                            jwt.sign(rule, keys.secretOrKey, {expiresIn: 3}, (err,token) => {
+                            jwt.sign(rule, keys.secretOrKey, {expiresIn: 3600}, (err,token) => {
                                 if(err) throw err;
                                 res.json({
                                     code:200, //成功标识

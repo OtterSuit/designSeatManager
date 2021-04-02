@@ -9,6 +9,9 @@ export default {
     return api({ url: 'api/users/current', params, method: 'get' })
   },
   login(params) {
-    return api({ url: 'api/users/login', params, method: 'post'})
+    return api({ url: 'api/users/login', params, method: 'post' })
+  },
+  register(params) {
+    return api({ url: 'api/users/register', params, method: 'post' })
   }
 }

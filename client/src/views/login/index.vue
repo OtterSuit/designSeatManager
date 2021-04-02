@@ -45,8 +45,8 @@
             </span>
           </el-form-item>
 
-          <el-button :loading="loading" type="primary" style="width:150px;height:48px;margin-bottom:30px;" @click.native.prevent="handleLogin">登录</el-button>
-          <el-button :loading="loading" style="width:150px;height:48px;margin:0 0 30px 100px;" @click.native.prevent="handleRegister">注册</el-button>
+          <el-button :loading="loading" type="primary" style="width:150px;height:48px;margin:10px 0 30px 0;" @click.native.prevent="handleLogin">登录</el-button>
+          <el-button :disabled="loading" style="width:150px;height:48px;margin:10px 0 30px 100px;" @click.native.prevent="handleRegister">注册</el-button>
           <!-- <span class="forget">忘记密码？</span> -->
         </el-col>
       </el-row>
@@ -112,11 +112,11 @@ export default {
       this.$refs.loginForm.validate(valid => {
         if (valid) {
           this.loading = true
-          this.$store.dispatch('user/login', this.loginForm).then(async () => {
+          this.$store.dispatch('user/login', this.loginForm).then(async() => {
             this.$router.push({ path: '/' })
             this.loading = false
           }).catch((err) => {
-            console.log(err);
+            console.log(err)
             this.loading = false
           })
         } else {
@@ -210,7 +210,7 @@ $light_gray:#eee;
     background-image: url("../../assets/images/login-main.png");
     background-size: cover;
     height: 385px;
-    padding: 38px 120px 0;
+    padding: 48px 120px 0;
 
   }
   .login-title {
