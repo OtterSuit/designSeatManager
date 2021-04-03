@@ -131,4 +131,20 @@ router.get("/current", passport.authenticate("jwt", {session: false}), (req,res)
         });
     })
 
+
+// 查看全部用户 表格展示 统计
+//$route GET api/users/allUser
+//@desc 管理员查询所有用户 做统计等 前端做调用该接口限制
+//@access Private
+
+router.get("/allUser",(req,res)=>{
+    User.find()
+    .then(result =>{
+        res.json({
+            code:200,
+            msg:"查询成功！",
+            result
+        })
+    })
+})
 module.exports = router;
