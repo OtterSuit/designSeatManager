@@ -6,7 +6,7 @@ const SeatSchema=new Schema({
 		type: String,
 		required: true
     },
-    seatID: { //座位标号
+    seat_id: { //座位标号
         type:String,
         required:true
     },
@@ -17,7 +17,11 @@ const SeatSchema=new Schema({
     },
     status: { //座位状态 0 空闲 1 使用中 2 已被预约 3暂停使用 
         type:String
+    },
+    appointment_time: { //预约时间 非必须
+        type:String
     }
+
 })
 
 module.exports = Seat = mongoose.model("seat",SeatSchema)

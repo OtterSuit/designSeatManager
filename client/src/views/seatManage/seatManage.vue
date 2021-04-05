@@ -17,7 +17,7 @@
     <div class="seat" style="overflow-y:scroll; height:70vh">
       <div style="text-align: left; color: #ccc; font-weight: 600">
         <el-card shadow="hover">
-          选择两个座位并点击换座按钮可以实现换座
+          欢迎选座
         </el-card>
       </div>
       <div class="seat_left">
@@ -27,13 +27,13 @@
             :key="index"
             class="seat_select"
             :class="{
-              active: item.studentName !== '',
-              calling: item.status === '3'&& item.studentName !== '',
+              active: item.status !== '0',
             }"
             @click="choosely(index, item)"
           >
+          <!-- calling: item.status === '0'&& item.user_now !== '', -->
             <div
-              v-if="chooseClick.indexOf(index) != -1"
+              v-if="chooseClick.indexOf(item) > -1"
               class="jiaobiao"
             >
               <img
@@ -42,23 +42,31 @@
                 width="20px"
               >
             </div>
-            <h4>{{ item.name }}</h4>
-            <P class="fontName">{{ item.studentName }}<br></P>
+            <h4>{{ item.seat_id }}</h4>
+            <P class="fontName">{{ item.user_now }}<br></P>
           </li>
         </ul>
       </div>
       <!-- 展示end -->
     </div>
     <div style="text-align: right">
-      <el-button type="primary" @click="changeOK">换 `座</el-button>
+      <el-button type="primary" @click="changeOK">换 座</el-button>
+    </div>
+    <div style="text-align: center">
+      <el-button type="primary">选 座</el-button>
+    </div>
+    <div style="text-align: left">
+      <el-button type="primary" @click="appointmentOK">预 约</el-button>
     </div>
   </div>
 </template>
 
 <script>
 import myfilters from '@/components/myfilters'
-// import api from '@/api'
-import { getSeatList } from '@/api/seat/seat'
+import api from '@/api'
+// import { getSeatList } from '@/api/seat/seat'
+import parseTime from '@/utils/index.js'
+
 export default {
   components: {
     myfilters
@@ -71,23 +79,31 @@ export default {
   },
   data() {
     return {
-      leftlist: [],
-      chooseClick: []
+      leftlist: [], //该楼层的所有座位
+      chooseClick: [] // 选中的空座位
     }
   },
   watch: {
     title(newVal, oldVal) {
       console.log(newVal + '=====' + oldVal)
-      getSeatList(newVal).then(res => {
+      // getSeatList(newVal).then(res => {
+      //   console.log(res)
+      //   this.leftlist = res.data.items
+      // })
+      api.getSeat({storey:newVal}).then(res=>{
         console.log(res)
-        this.leftlist = res.data.items
+        this.leftlist = res.item
       })
     }
   },
   created() {
-    getSeatList(this.title).then(res => {
+    // getSeatList(this.title).then(res => {
+    //   console.log(res)
+    //   this.leftlist = res.data.items
+    // })
+    api.getSeat({storey:this.title}).then(res => {
       console.log(res)
-      this.leftlist = res.data.items
+      this.leftlist = res.item
     })
   },
   methods: {
@@ -101,26 +117,75 @@ export default {
     },
     // 选择对应的座位号
     choosely(n, item) {
-      // 如果是呼叫状态则不让用户点击
-      if (item.status === '3' && item.studentName !== '') {
-        this.$message({
-          message: '对不起！该座位不是空闲状态，请勿操作',
-          type: 'warning'
-        })
-        return
-      }
+      // console.log(n,item)
+      this.chooseClick.push(item)
       if (this.chooseClick.indexOf(n) !== -1) {
         return
       }
-      // 存的是index
-      this.chooseClick.push(n)
-      // 将要换座的两个座位
-      if (this.chooseClick.length > 2) {
-        this.chooseClick.shift()
+      if(this.chooseClick.length === 2){
+      this.chooseClick.splice(0,1)
       }
-      this.nameTemp = item.patientName // 拷贝
+      // console.log(this.chooseClick)
+
+      // // 如果是呼叫状态则不让用户点击
+      // if (item.status === '3' && item.studentName !== '') {
+      //   this.$message({
+      //     message: '对不起！该座位不是空闲状态，请勿操作',
+      //     type: 'warning'
+      //   })
+      //   return
+      // }
+      // if (this.chooseClick.indexOf(n) !== -1) {
+      //   return
+      // }
+      // // 存的是index
+      // this.chooseClick.push(n)
+      // // 将要换座的两个座位
+      // if (this.chooseClick.length > 2) {
+      //   this.chooseClick.shift()
+      // }
     },
-    // 换位按钮
+
+    //计算预约到期时间 
+  timeMethod(timeLength){
+    const now = new Date(); //读取当前日期
+    const year = now.getFullYear();
+    const month = now.getMonth()+1;
+    const day = now.getDate();
+    const hour = now.getHours();
+    const minutes = now.getMinutes();
+    const seconds = now.getSeconds();
+    // console.log(now.getMinutes())
+    // console.log(minutesTemp)
+    now.setMinutes(now.getMinutes()+timeLength);// 加上预约时间
+    const newMinutes = now.getMinutes()
+    const newHours = now.getHours()
+    const time_str = year+'-'+month+'-'+day+'-'+hour+'-'+minutes+'-'+seconds;
+    const time_str2 = year+'-'+month+'-'+day+'-'+newHours+'-'+newMinutes+'-'+seconds; 
+    // console.log(time_str);
+    // console.log(time_str2)
+    return time_str2
+    },
+    // 预约按钮
+    appointmentOK(){
+      if(this.chooseClick.length === 1){
+        // const nowDate = new Date();
+        let appointment_time = this.timeMethod(2);
+        //选择了空座位且点击预约 调用接口
+        api.postAppointmentSeat({seat_id:this.chooseClick[0].seat_id,status:'2',appointment_time:appointment_time})
+        .then(res =>{
+          console.log(res)
+        })
+        setTimeout(() => {
+        api.postAppointmentSeat({seat_id:this.chooseClick[0].seat_id,status:'0',appointment_time:''})
+        .then(res =>{
+          console.log(res)
+          console.log("预约已过期！")
+        })
+        }, 36000*2);
+      }
+    },
+    // 换位按钮(没用了)
     changeOK() {
       if (this.chooseClick.length === 2) {
         // 如果两个都为空座

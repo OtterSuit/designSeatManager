@@ -20,16 +20,17 @@ router.post("/register", (req,res) => {
     // console.log(req.body)
 
     // 查询数据库是否座位编号
-    Seat.findOne({seatID: req.body.seatID})
+    Seat.findOne({seat_id: req.body.seat_id})
         .then((seat) => {
             if(seat) {
-                return res.status(400).json({seatID: "该编号已被注册！"})
+                return res.status(400).json({seat_id: "该编号已被注册！"})
             }else{
                 const newSeat = new Seat({
                     storey:req.body.storey,
-                    seatID:req.body.seatID,
-                    userNow:req.body.userNow,
-                    status:req.body.status
+                    seat_id:req.body.seat_id,
+                    user_now:req.body.user_now,
+                    status:req.body.status,
+                    appointment_time:req.body.appointment_time
                 })
 
                 // bcrypt.genSalt(10, function(err,salt){
@@ -70,7 +71,7 @@ router.post("/register", (req,res) => {
     //     .then(res=>{
     //         console.log(res)
     //     })
-    const whereStr = {seatID:req.body.seatID};  // 查询条件
+    const whereStr = {seat_id:req.body.seat_id};  // 查询条件
     const updateStr = seatFileFields
     Seat.updateOne(whereStr, updateStr, function(err, ress) {
         if (err) throw err;
@@ -84,7 +85,7 @@ router.post("/register", (req,res) => {
 
 
     // 查询数据库是否座位编号
-    // Seat.findOne({seatID: req.body.seatID})
+    // Seat.findOne({seat_id: req.body.seat_id})
     //     .then((seat) => {
     //         console.log(seat)
     //         seat.updateOne({status:'1'},{$set:{status:'2222'}})
@@ -105,22 +106,63 @@ router.post("/register", (req,res) => {
         // })
 })
 
+//座位预约
+//$route POST api/seat/appointment
+//@desc 用户预约座位
+//@access public 
+router.post("/appointment", (req,res) => {
+    console.log(req.body)
+    const seatFileFields = {}
+    if(req.body.status!=='') 
+    {
+        seatFileFields.status = req.body.status // 获得前端给的值 给seatfileFields对象赋值0
+        seatFileFields.appointment_time = req.body.appointment_time // 获得前端给的时间即预约过期时间
+    }
+    console.log(seatFileFields)
+    const whereStr = {seat_id:req.body.seat_id};  // 查询条件
+    const updateStr = seatFileFields
+    Seat.updateOne(whereStr, updateStr, function(err, ress) {
+        if (err) throw err;
+        console.log("更新成功");
+        const result = {}
+        result.code = 200
+        result.msg = "座位预约成功"
+        res.json(result)
+    })
+
+})
+
+
 
 // 座位查询
-//$route GET api/seat/find
+//$route POST api/seat/find
 //@desc 返回请求的json数据
 //@access public 
-router.get("/find",(req,res)=>{
-    Seat.find()
-    .then(result =>{
-        res.json({
-            code:200,
-            result
+router.post("/find",(req,res)=>{
+    if(req.body.storey === '' || req.body.storey == null) {
+        // 如果没有指定规定楼层 默认返回全部
+        Seat.find()
+        .then(item =>{
+            res.json({
+                code:200,
+                msg:"查询全部楼层所有座位信息",
+                item
+            })
         })
-    })
+    }else {
+        Seat.find({"storey":req.body.storey})
+        .then(item =>{
+            res.json({
+                code:200,
+                msg:"查询"+req.body.storey+"楼层的信息",
+                item
+            })
+        })
+    }
+    
     // res.json({
         // storey: res.seat.storey,
-        // seatID: res.seat.seatID,
+        // seat_id: res.seat.seat_id,
         // userNow: res.seat.userNow,
         // status: res.seat.status,
     // });
