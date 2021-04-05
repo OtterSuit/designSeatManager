@@ -19,7 +19,8 @@
 
 <script>
 import seatManage from './seatManage'
-import { getPeopleInfo, getSeatInfo } from '@/api/baseData/baseData'
+import api from '@/api'
+// import { getPeopleInfo, getSeatInfo } from '@/api/baseData/baseData'
 
 export default {
   components: {
@@ -40,17 +41,22 @@ export default {
     }
   },
   created() {
-    this.fetchData()
+    // this.fetchData()
   },
   methods: {
     fetchData() {
-      getSeatInfo().then(res => {
-        this.seatMessage = res.data.items.seatMessage
-        getPeopleInfo().then(res => {
-          this.peopleMessage = res.data.items.peopleMessage
-          this.getFloorSeat()
-        })
+      api.getSeat.then(res=>{
+        console.log(res)
       })
+
+      //注释为mock服务器时模拟接口
+      // getSeatInfo().then(res => {
+      //   this.seatMessage = res.data.items.seatMessage
+      //   getPeopleInfo().then(res => {
+      //     this.peopleMessage = res.data.items.peopleMessage
+      //     this.getFloorSeat()
+      //   })
+      // })
     },
     getFloorSeat() {
       if (this.seatMessage && this.peopleMessage) {
