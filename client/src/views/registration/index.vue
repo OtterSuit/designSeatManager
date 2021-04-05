@@ -65,7 +65,7 @@
       <el-form label-width="180px">
         <el-form-item label="学生学号">
           <el-input
-            v-model="queryInput"
+            v-model="schoolID"
             style="width: 50%"
             placeholder="请输入学生学号"
             @submit.native.prevent
@@ -74,7 +74,7 @@
             class="searchIcon"
             type="primary"
             icon="el-icon-search"
-            :disabled="queryInput.trim()===''"
+            :disabled="schoolID.trim()===''"
             @click="queryMessage"
           >查询</el-button>
         </el-form-item>
@@ -87,7 +87,7 @@
         <el-row :gutter="30">
           <el-col :span="6">
             <el-form-item label="学号:">
-              {{ query.id }}
+              {{ query.schoolID }}
             </el-form-item>
           </el-col>
           <el-col :span="6">
@@ -97,7 +97,7 @@
           </el-col>
           <el-col :span="6">
             <el-form-item label="身份:">
-              {{ query.identity==='1'?'学生':'教师' }}
+              {{ query.identity === 'admin' ? '管理员' : '用户' }}
             </el-form-item>
           </el-col>
           <el-col :span="6">
@@ -175,7 +175,8 @@
 <script>
 import myfilters from '@/components/myfilters'
 import Mydrawer from './components/drawer/mydrawer.vue'
-import { getPeopleInfo, getSeatInfo } from '@/api/baseData/baseData'
+// import { getPeopleInfo, getSeatInfo } from '@/api/baseData/baseData'
+import api from '@/api'
 
 export default {
   components: {
@@ -190,7 +191,7 @@ export default {
       chooseAfterValue: ['03', '04'],
       seatList: [],
       dialogVisible: false,
-      queryInput: '', // 查询输入
+      schoolID: '', // 查询输入
       queryBtn: true, // 查询按钮
       query: {},
       tableData: [
@@ -228,19 +229,22 @@ export default {
   },
   methods: {
     fetchData() {
-      getPeopleInfo().then(res => {
-        if (res.code === 20000) {
-          this.peopleMessage = res.data.items.peopleMessage
-        }
-      })
-      getSeatInfo().then(res => {
-        if (res.code === 20000) {
-          this.seatMessage = res.data.items.seatMessage
-          this.seatList = this.seatMessage.filter(item => {
-            return item.floor === this.drawer.floor
-          })
-        }
-      })
+      // getPeopleInfo().then(res => {
+      //   if (res.code === 20000) {
+      //     this.peopleMessage = res.data.items.peopleMessage
+      //   }
+      // })
+      // getSeatInfo().then(res => {
+      //   if (res.code === 20000) {
+      //     this.seatMessage = res.data.items.seatMessage
+      //     this.seatList = this.seatMessage.filter(item => {
+      //       return item.floor === this.drawer.floor
+      //     })
+      //   }
+      // })
+      // api.getUser({schoolID: '1706300053'}).then(res => {
+      //   console.log(res);
+      // })
     },
     floorChange() {
       this.seatList = this.seatMessage.filter(item => {
@@ -289,23 +293,27 @@ export default {
     seatTitle(status) {
       return status ? '调换座位' : '安排座位'
     },
+    // queryMessage() {
+    //   if (!this.isExist()) {
+    //     this.$message({
+    //       type: 'error',
+    //       message: '对不起，查无此人'
+    //     })
+    //   }
+    // },
     queryMessage() {
-      if (!this.isExist()) {
-        this.$message({
-          type: 'error',
-          message: '对不起，查无此人'
-        })
-      }
-    },
-    isExist() {
       this.isQuery = false
-      this.peopleMessage.forEach(item => {
-        if (item.id === this.queryInput) {
+      // this.peopleMessage.forEach(item => {
+      //   if (item.id === this.schoolID) {
+      //     this.isQuery = true
+      //     this.query = item
+      //   }
+      // })
+      api.getUser({schoolID: this.schoolID}).then(res => {
+        console.log(res);
+          this.query = res.item
           this.isQuery = true
-          this.query = item
-        }
       })
-      return this.isQuery
     },
     idFormat(row, index) {
       const floorId = {

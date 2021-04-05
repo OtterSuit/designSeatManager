@@ -20,12 +20,11 @@
       border
     >
       <el-table-column
-        prop="id"
+        prop="seatID"
         label="座位号"
-        :formatter="idFormat"
       />
       <el-table-column
-        prop="floor"
+        prop="storey"
         label="座位楼层"
       />
       <el-table-column
@@ -70,13 +69,13 @@
           <el-row>
             <el-col :span="11">
               <el-form-item label="座位号">
-                <el-input v-model="form.id" />
+                <el-input v-model="form.seatID" />
               </el-form-item>
             </el-col>
             <el-col :span="11">
               <el-form-item label="座位楼层">
-                <!-- <el-input v-model="form.floor" /> -->
-                <el-select v-model="form.floor">
+                <!-- <el-input v-model="form.storey" /> -->
+                <el-select v-model="form.storey">
                   <el-option label="一楼" value="一楼" />
                   <el-option label="二楼" value="二楼" />
                   <el-option label="三楼" value="三楼" />
@@ -106,7 +105,8 @@
 <script>
 import myfilters from '@/components/myfilters'
 import { /* getInfoChange,  */addInfoChange, editInfoChange, deleteInfoChange } from '@/api/people/infoChange'
-import { /* getPeopleInfo, */ getSeatInfo } from '@/api/baseData/baseData'
+import api from '@/api'
+
 export default {
   components: {
     myfilters
@@ -130,19 +130,13 @@ export default {
   },
   methods: {
     fetchData() {
-      getSeatInfo().then(res => {
+      api.getAllSeat().then(res => {
         console.log(res)
-        this.table = res.data.items.seatMessage
+        this.table = res.result
         this.oldTable = JSON.parse(JSON.stringify(this.table))
         this.total = this.oldTable.length
         this.tableData = this.table.slice(0, this.pageSize)
       })
-      // getInfoChange().then(response => {
-      //   this.table = response.data.items
-      //   this.oldTable = JSON.parse(JSON.stringify(this.table))
-      //   this.total = response.data.total
-      //   this.tableData = this.table.slice(0, this.pageSize)
-      // })
     },
     // 分页
     currentChange(page) {
@@ -156,11 +150,11 @@ export default {
         return
       }
       const arr = []
-      this.oldTable.forEach(item => {
-        if (this.idFormat(item) === select.content) {
-          arr.push(item)
-        }
-      })
+      // this.oldTable.forEach(item => {
+      //   if (this.idFormat(item) === select.content) {
+      //     arr.push(item)
+      //   }
+      // })
       if (arr.length === 0) {
         this.$refs.myfilters.select.content = ''
         this.$message({
@@ -209,16 +203,16 @@ export default {
         }
       })
     },
-    idFormat(row, index) {
-      const floorId = {
-        '一楼': 'A',
-        '二楼': 'B',
-        '三楼': 'C',
-        '四楼': 'D',
-        '五楼': 'E'
-      }
-      return floorId[row.floor] + row.id
-    },
+    // idFormat(row, index) {
+    //   const storeyId = {
+    //     '一楼': 'A',
+    //     '二楼': 'B',
+    //     '三楼': 'C',
+    //     '四楼': 'D',
+    //     '五楼': 'E'
+    //   }
+    //   return storeyId[row.storey] + row.id
+    // },
     handleEdit(index, row) {
       this.form = JSON.parse(JSON.stringify(row))
       this.oldForm = JSON.parse(JSON.stringify(row))

@@ -28,14 +28,14 @@ router.post("/register", (req,res) => {
 
     // 判断isValid是否通过
     if(!isValid) {
-        return res.status(400).json(errors);
+        return res.json(errors);
     }
 
     // 查询数据库是否拥有一卡通
     User.findOne({schoolID: req.body.schoolID})
         .then((user) => {
             if(user) {
-                return res.status(400).json({schoolID: "该一卡通已被注册！"})
+                return res.json({schoolID: "该一卡通已被注册！", code: 400})
             }else{
                 // 头像
                 const avatar = gravatar.url(req.body.email, {
@@ -79,7 +79,8 @@ router.post("/login", (req,res) => {
     // console.log(req)
     // 判断isValid是否通过
     if(!isValid) {
-        return res.status(400).json(errors);
+        errors.code = 400
+        return res.json(errors);
     }
 
 
@@ -89,7 +90,7 @@ router.post("/login", (req,res) => {
     User.findOne({schoolID})
         .then(user => {
             if(!user){
-                return res.status(404).json({schoolID: "用户不存在！"})
+                return res.json({schoolID: "用户不存在！", code: 400})
             }
 
             // 密码匹配
@@ -97,18 +98,17 @@ router.post("/login", (req,res) => {
                   .then(isMatch => {
                         if(isMatch){
                             const rule = {id: user.id,name: user.name,schoolID: user.schoolID, identity: user.identity }
+                            //jwt.sign("规则","加密名字","{过期时间}","箭头函数")
                             jwt.sign(rule, keys.secretOrKey, {expiresIn: 3600}, (err,token) => {
                                 if(err) throw err;
                                 res.json({
-                                    code:200, //成功标识
+                                    code: 200, //成功标识
                                     success: true,
                                     token: "Bearer " + token
                                 })
                             })
-                            //jwt.sign("规则","加密名字","{过期时间}","箭头函数")
-                            // res.json({msg: "success！"})
                         }else {
-                            return res.status(400).json({password: "密码错误"})
+                            return res.json({password: "密码错误", code: 400})
                         }
                     })
         })
@@ -121,7 +121,7 @@ router.post("/login", (req,res) => {
 //@access Private
 router.get("/current", passport.authenticate("jwt", {session: false}), (req,res) => {
         res.json({
-            code:200,
+            code: 200,
             id: req.user.id,
             schoolID: req.user.schoolID,
             name: req.user.name,
@@ -141,10 +141,45 @@ router.get("/allUser",(req,res)=>{
     User.find()
     .then(result =>{
         res.json({
-            code:200,
-            msg:"查询成功！",
+            code: 200,
             result
         })
     })
+})
+
+
+//$route POST api/users/userQuery
+//@desc 返回token jwt passport
+//@access public 
+
+router.post("/userQuery", (req,res) => {
+
+    const { schoolID } = req.body
+    if(!schoolID || schoolID.length !== 10) {
+        return res.json({
+            code: 400,
+            message: '请输入正确的学号'
+        });
+    }
+    console.log(schoolID.length !== 10);
+    
+    // 查询数据库
+    User.findOne({schoolID})
+        .then(user => {
+            if(!user){
+                return res.json({schoolID: "用户不存在！", code: 400})
+            }
+            const newUser = {
+                schoolID: user.schoolID,
+                name: user.name,
+                identity: user.identity,
+                college: user.college,
+                seat_id: user.seat_id || '',
+            }
+            return res.json({
+                code: 200,
+                item: newUser
+            })
+        })
 })
 module.exports = router;

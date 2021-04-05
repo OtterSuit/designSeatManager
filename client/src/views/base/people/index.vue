@@ -21,7 +21,7 @@
       border
     >
       <el-table-column
-        prop="id"
+        prop="schoolID"
         label="学号"
       />
       <el-table-column
@@ -78,8 +78,8 @@
         <el-form ref="form" :model="form" label-width="100px" :rules="rules">
           <el-row type="flex">
             <el-col :span="11">
-              <el-form-item label="学号" prop="id">
-                <el-input ref="idInput" v-model.number="form.id" />
+              <el-form-item label="学号" prop="schoolID">
+                <el-input ref="idInput" v-model.number="form.schoolID" />
               </el-form-item>
             </el-col>
             <el-col :span="11">
@@ -92,8 +92,8 @@
             <el-col :span="11">
               <el-form-item label="身份" prop="identity">
                 <el-select v-model="form.identity">
-                  <el-option label="学生" value="1" />
-                  <el-option label="教师" value="2" />
+                  <el-option label="用户" value="user" />
+                  <el-option label="管理员" value="admin" />
                 </el-select>
               </el-form-item>
             </el-col>
@@ -122,7 +122,8 @@
 
 <script>
 import myfilters from '@/components/myfilters'
-import { getPeopleInfo } from '@/api/baseData/baseData'
+// import { getPeopleInfo } from '@/api/baseData/baseData'
+import api from '@/api'
 import { /* getInfoChange, */ addInfoChange, editInfoChange, deleteInfoChange } from '@/api/people/infoChange'
 export default {
   components: {
@@ -131,7 +132,7 @@ export default {
   data() {
     return {
       rules: {
-        id: [
+        schoolID: [
           { required: true, message: '请输入学号', trigger: 'blur' }
         ],
         name: [
@@ -162,19 +163,20 @@ export default {
   },
   methods: {
     fetchData() {
-      getPeopleInfo().then(res => {
-        console.log(res)
-        this.table = res.data.items.peopleMessage
+      // getPeopleInfo().then(res => {
+      //   console.log(res)
+      //   this.table = res.data.items.peopleMessage
+      //   this.oldTable = JSON.parse(JSON.stringify(this.table))
+      //   this.total = this.oldTable.length
+      //   this.tableData = this.table.slice(0, this.pageSize)
+      // })
+      api.getAllUser().then(res => {
+        console.log(res);
+        this.table = res.result
         this.oldTable = JSON.parse(JSON.stringify(this.table))
         this.total = this.oldTable.length
         this.tableData = this.table.slice(0, this.pageSize)
       })
-      // getInfoChange().then(response => {
-      //   this.table = response.data.items
-      //   this.oldTable = JSON.parse(JSON.stringify(this.table))
-      //   this.total = response.data.total
-      //   this.tableData = this.table.slice(0, this.pageSize)
-      // })
     },
     // 分页
     currentChange(page) {
@@ -223,7 +225,7 @@ export default {
       }
     },
     formatIdentity(row, index) {
-      return row.identity === '1' ? '学生' : '教师'
+      return row.identity === "admin" ? '管理员' : '用户'
     },
     addClick() {
       this.edit = false

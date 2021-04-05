@@ -1,5 +1,4 @@
 import { api } from '../api.js'
-// import { login } from '../user.js'
 
 export default {
   getTest(params) {
@@ -13,5 +12,11 @@ export default {
   },
   register(params) {
     return api({ url: 'api/users/register', params, method: 'post' })
-  }
+  },
+  getAllUser(params) {
+    return api({ url: 'api/users/allUser', params, method: 'get' })
+  },
+  getUser(params) {
+    return api({ url: 'api/users/userQuery', params, method: 'post' })
+  },
 }

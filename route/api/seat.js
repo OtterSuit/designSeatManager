@@ -125,4 +125,20 @@ router.get("/find",(req,res)=>{
         // status: res.seat.status,
     // });
 })
+
+// 查看全部座位 表格展示 统计
+//$route GET api/seat/allSeat
+//@desc 管理员查询所有座位 做统计等 前端做调用该接口限制
+//@access public
+
+router.get("/allSeat",(req,res)=>{
+    Seat.find()
+    .then(result =>{
+        res.json({
+            code: 200,
+            result
+        })
+    })
+})
+
 module.exports = router //供出router
