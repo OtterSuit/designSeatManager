@@ -141,4 +141,102 @@ router.get("/allSeat",(req,res)=>{
     })
 })
 
+// 查看某层楼全部座位 表格展示 统计
+//$route GET api/seat/getStorey
+//@desc 管理员查询某层楼所有座位 做统计等 前端做调用该接口限制
+//@access public
+
+router.get("/getStorey",(req,res)=>{
+    Seat.find({storey: req.query.storey})
+    .then(seats =>{
+        res.json({
+            code: 200,
+            seats
+        })
+    })
+})
+// 查看全部座位 表格展示 统计
+//$route POST api/seat/chooseSeat
+//@desc 管理员查询所有座位 做统计等 前端做调用该接口限制
+//@access public
+
+router.post("/chooseSeat",(req,res)=>{
+    console.log(req.body);
+    Seat.findOne({_id: req.body.seat_id})
+        .then(seat => {
+            console.log(seat);
+            if(seat.status === '0') {
+                User.findOne({_id: req.body.user_id})
+                    .then(user => {
+                        console.log(user);
+                        console.log(user.seat_id);
+                        if(!user.seat_id) {
+                            const newSeat = {
+                                // storey: seat.storey,
+                                // seat_id: seat.seat_id,
+                                user_now: user._id + '',
+                                status: '1',
+                                // appointment_time: '',
+                            }
+                            const newUser = {
+                                // schoolID: user.schoolID,
+                                // name: user.name,
+                                // email: user.email,
+                                // college: user.college,
+                                // avatar: user.avatar,
+                                // password: user.password,
+                                // identity: user.identity,
+                                seat_id: req.body.seat_id
+                            }
+                            console.log(newSeat, newUser);
+                            Seat.updateOne({_id: req.body.seat_id}, newSeat, function(err, ress) {
+                                if(ress) {
+                                    User.findOneAndUpdate({_id: req.body.user_id}, {$set:newUser}, {new:true}).then(user => {
+                                        res.json({code: 200, user, seat})
+                                    })
+                                }else{
+                                    res.json({code: 400})
+                                }
+                            })
+                        }else{
+                            const newUser = {
+                                // schoolID: user.schoolID,
+                                // name: user.name,
+                                // email: user.email,
+                                // college: user.college,
+                                // avatar: user.avatar,
+                                // password: user.password,
+                                // identity: user.identity,
+                                seat_id: ''
+                            }
+                            User.findOneAndUpdate({_id: req.body.user_id}, {$set:newUser}, {new:true}).then(user => {
+                                res.json({code: 400, user})
+                            })
+                        }
+                    }).catch(err => {
+                        res.json(err)
+                    })
+            }else {
+                const newSeat = {
+                    // storey: seat.storey,
+                    // seat_id: seat.seat_id,
+                    status: '0',
+                    // appointment_time: '',
+                }
+                Seat.findOneAndUpdate({_id: req.body.seat_id}, {$set:newSeat}, {new:true}).then(seat => {
+                    
+                    res.json({code: 400, seat})
+                    
+                })
+            }
+        })
+    // Seat.find({storey: req.body.storey})
+    // .then(seats =>{
+    //     res.json({
+    //         code: 200,
+    //         seats
+    //     })
+    // })
+})
+
 module.exports = router //供出router

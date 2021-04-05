@@ -33,8 +33,9 @@ const UserSchema=new Schema({
 		default: Date.now //创建的时候时间是多少就是多少		
 	},
 	seat_id: {
-		type:Schema.Types.ObjectId, //mangoDB提供的方法，根据id拿到user
-		ref:"seat" //和seat表关联
+        type: String,
+		// type:Schema.Types.ObjectId, //mangoDB提供的方法，根据id拿到user
+		// ref:"seat" //和seat表关联
 	}
 })
 

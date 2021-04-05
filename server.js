@@ -41,6 +41,8 @@ mongoose.connect(db)
 		.then(() => console.log("mongoDB connect!"))
 		.catch(err => console.log(err))
 
+mongoose.set('useFindAndModify', false)
+
 // passport初始化
 app.use(passport.initialize());
 

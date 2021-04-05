@@ -170,6 +170,7 @@ router.post("/userQuery", (req,res) => {
                 return res.json({schoolID: "用户不存在！", code: 400})
             }
             const newUser = {
+                id: user._id,
                 schoolID: user.schoolID,
                 name: user.name,
                 identity: user.identity,

@@ -11,8 +11,9 @@ const SeatSchema=new Schema({
         required:true
     },
     userNow: { //使用者名字
-        type:Schema.Types.ObjectId,//mangoDB提供的方法，根据id拿到user
-		ref:"user"//和user表关联
+		type: String,
+        // type:Schema.Types.ObjectId,//mangoDB提供的方法，根据id拿到user
+		// ref:"user"//和user表关联
     },
     status: { //座位状态 0 空闲 1 使用中 2 已被预约 3暂停使用 
         type:String

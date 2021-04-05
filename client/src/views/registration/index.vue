@@ -35,12 +35,12 @@
               v-for="(item, index) in seatList"
               :key="index"
               :class="{
-                active: chooseAfterValue.indexOf(item.id) != -1,
-                choosenow: item.id === seatChoosed,
+                active: chooseAfterValue.indexOf(item._id) != -1,
+                choosenow: item._id === seatChoosed,
               }"
               @click="chooseSeat(item)"
             >
-              <div class="seatLabelstyle">{{ idFormat(item) }}</div>
+              <div class="seatLabelstyle">{{item._id}}</div>
             </li>
           </div>
         </ul>
@@ -162,7 +162,7 @@
           >
             <el-table-column label="时间" prop="date" />
             <el-table-column label="楼层" prop="floor" />
-            <el-table-column label="座位号" prop="id" :formatter="idFormat" />
+            <el-table-column label="座位号" prop="id"  />
             <el-table-column label="备注" prop="remark" />
           </el-table>
           <!-- table end -->
@@ -188,7 +188,7 @@ export default {
       isQuery: false, // 是否查询
       itemNumSeat: '',
       drawerOn: false,
-      chooseAfterValue: ['03', '04'],
+      chooseAfterValue: [],
       seatList: [],
       dialogVisible: false,
       schoolID: '', // 查询输入
@@ -247,12 +247,17 @@ export default {
       // })
     },
     floorChange() {
-      this.seatList = this.seatMessage.filter(item => {
-        return item.floor === this.drawer.floor
+      api.getStorey({storey: this.drawer.floor}).then(res => {
+        console.log(res);
+        this.seatList = res.seats
       })
+      // this.seatList = this.seatMessage.filter(item => {
+      //   return item.floor === this.drawer.floor
+      // })
     },
     seatPlanOn() {
       this.drawerOn = true
+      this.floorChange()
     },
     // 抽屉组件
     close() {
@@ -260,20 +265,23 @@ export default {
     },
     // 选座
     chooseSeat(item) {
-      if (this.chooseAfterValue.includes(item.id) && this.query.status !== item.id) {
+      if (this.chooseAfterValue.includes(item._id) && this.query.status !== item._id) {
         return this.$message({
           type: 'error',
           message: '对不起，该座有人'
         })
       }
-      this.seatChoosed = item.id
-      this.itemNumSeat = this.idFormat(item)
+      this.seatChoosed = item._id
+      this.itemNumSeat = item._id
     },
     // 确认选座
     seatconfirm() {
       if (this.seatChoosed !== '') {
+        api.chooseSeat({seat_id: this.seatChoosed, user_id: this.query.id}).then(res => {
+          console.log(res);
+        })
         if (this.query.status) {
-          this.chooseAfterValue.splice(this.chooseAfterValue.length - 1, 1, this.seatChoosed)
+          // this.chooseAfterValue.splice(this.chooseAfterValue.length - 1, 1, this.seatChoosed)
         }
         this.$set(this.query, 'status', this.seatChoosed)
         this.chooseAfterValue.push(this.seatChoosed)
@@ -293,38 +301,14 @@ export default {
     seatTitle(status) {
       return status ? '调换座位' : '安排座位'
     },
-    // queryMessage() {
-    //   if (!this.isExist()) {
-    //     this.$message({
-    //       type: 'error',
-    //       message: '对不起，查无此人'
-    //     })
-    //   }
-    // },
     queryMessage() {
       this.isQuery = false
-      // this.peopleMessage.forEach(item => {
-      //   if (item.id === this.schoolID) {
-      //     this.isQuery = true
-      //     this.query = item
-      //   }
-      // })
       api.getUser({schoolID: this.schoolID}).then(res => {
         console.log(res);
           this.query = res.item
           this.isQuery = true
       })
     },
-    idFormat(row, index) {
-      const floorId = {
-        '一楼': 'A',
-        '二楼': 'B',
-        '三楼': 'C',
-        '四楼': 'D',
-        '五楼': 'E'
-      }
-      return floorId[row.floor] + row.id
-    }
   }
 }
 </script>
