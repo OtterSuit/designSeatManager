@@ -16,15 +16,23 @@ router.get("/test", (req,res) => {
 //@access public 看是否为公开接口还是私有 
 router.post("/choose", (req,res) => {
     Seat_User.findOne({seat_id: req.body.seat_id, user_id: req.body.user_id}).then(seat_user => {
+        const date = new Date()
+        const today = date.getFullYear() + '.' + (date.getMonth() + 1) + '.' + date.getDay()
         const newSeatUser = {
             seat_id: req.body.seat_id,
-            user_id: req.body.user_id
+            user_id: req.body.user_id,
+            seat_type: '0',
+            seat_begin: new Date().getTime(),
+            status: '1',
+            date: new Date(today).getTime()
         }
         if(seat_user) {
-            res.json({code: 300, seat_user})
+            Seat_User.findOneAndRemove({seat_id: req.body.seat_id, user_id: req.body.user_id}).then(seat_user => {
+                res.json({code: 300, seat_user})
+            })
         } else {
             new Seat_User(newSeatUser).save().then(seat_user => {
-                res.json({code: 200, seat_user})
+                res.json({code: 200, seat_user, today})
             })
         }
     })
@@ -104,6 +112,30 @@ router.post("/choose", (req,res) => {
     //         //     })
     //         // }
     //     })
+})
+
+//$route POST api/seat_user/check
+//@desc 返回请求的json数据
+//@access public 看是否为公开接口还是私有 
+router.post("/check", (req,res) => {
+    const now = new Date().getTime()
+    const checkTime = now - 86400000  + ''
+    console.log(checkTime);
+    const seatFileFields = {
+        status: '0',
+        seat_end: checkTime
+    }
+    Seat_User.updateMany({date: {$lte: checkTime}, status: '1'}, seatFileFields, function(err, ress) {
+        console.log(ress);
+        if(ress && ress.nModified > 0) {
+            res.json({code: 200})
+        } else {
+            Seat_User.find().then(seat_user => {
+                console.log(seat_user);
+                res.json(seat_user)
+            })
+        }
+    })
 })
 
 module.exports = router

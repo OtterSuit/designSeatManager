@@ -11,16 +11,25 @@ const Seat_UserSchema = new Schema({
         ref:"user" //和user表关联
     },
 	date: {
-		type: Date,
-		default: Date.now //创建的时候时间是多少就是多少		
+		type: String,
+		// default: Date.now //创建的时候时间是多少就是多少		
 	},
+    seat_type: {
+        type: String
+    },
+    seat_begin: {
+        type: String
+    },
+    seat_end: {
+        type: String
+    },
+    seat_appointment: {
+        type: String
+    },
     status: {
         type: String,
         default: '0'
     },
-    appointment_time: { //预约时间 非必须
-        type: String
-    }
 })
 
 module.exports = User = mongoose.model("seat_user",Seat_UserSchema)

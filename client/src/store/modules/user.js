@@ -11,6 +11,7 @@ const getDefaultState = () => {
     name: '',
     avatar: '',
     identity: '',
+    schoolId: ''
   }
 }
 
@@ -31,7 +32,10 @@ const mutations = {
   },
   SET_IDENTITY: (state, identity) => {
     state.identity = identity
-  }
+  },
+  SET_SCHOOLID: (state, schoolId) => {
+    state.schoolId = schoolId
+  },
 }
 
 const actions = {
@@ -39,12 +43,13 @@ const actions = {
   login({ commit }, userInfo) {
     const { username, password } = userInfo
     return new Promise((resolve, reject) => {
-      api.login({ schoolID: username.trim(), password: password }).then(response => {
+      api.login({ school_id: username.trim(), password: password }).then(response => {
         const { token } = response
         commit('SET_TOKEN', token)
         setToken(token)
         const { identity } = jwt_decode(token)
         commit('SET_IDENTITY', identity)
+        commit('SET_SCHOOLID', username)
         Cookies.set('Identity', identity)
         // api.getInfo().then(res => {
         //   console.log(res);
@@ -71,6 +76,7 @@ const actions = {
         commit('SET_NAME', name)
         commit('SET_AVATAR', avatar)
         commit('SET_IDENTITY', identity)
+        commit('SET_SCHOOLID', school_id)
         Cookies.set('Identity', identity)
 
 
