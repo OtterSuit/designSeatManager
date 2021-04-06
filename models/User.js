@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 //create Schema 数据模型
 const UserSchema=new Schema({
-	schoolID: { //一卡通
+	school_id: { //一卡通
 		type: String,
 		required: true
     },

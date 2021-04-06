@@ -4,6 +4,7 @@ const router = express.Router();
 // const passport = require("passport")
 const keys = require("../../config/keys.js");
 const Seat = require("../../models/Seat")
+const User = require("../../models/User")
 
 //$route GET api/seat/test
 //@desc 返回请求的json数据
@@ -116,10 +117,11 @@ router.post("/appointment", (req,res) => {
     if(req.body.status!=='') 
     {
         seatFileFields.status = req.body.status // 获得前端给的值 给seatfileFields对象赋值0
-        seatFileFields.appointment_time = req.body.appointment_time // 获得前端给的时间即预约过期时间
+        // seatFileFields.appointment_time = req.body.appointment_time // 获得前端给的时间即预约过期时间
+        seatFileFields.user_now = req.body.user_id // 获得前端给的时间即预约过期时间
     }
     console.log(seatFileFields)
-    const whereStr = {seat_id:req.body.seat_id};  // 查询条件
+    const whereStr = {seat_id: req.body.seat_id};  // 查询条件
     const updateStr = seatFileFields
     Seat.updateOne(whereStr, updateStr, function(err, ress) {
         if (err) throw err;
@@ -204,11 +206,11 @@ router.get("/getStorey",(req,res)=>{
 
 router.post("/chooseSeat",(req,res)=>{
     console.log(req.body);
-    Seat.findOne({_id: req.body.seat_id})
+    Seat.findOne({seat_id: req.body.seat_id})
         .then(seat => {
             console.log(seat);
             if(seat.status === '0') {
-                User.findOne({_id: req.body.user_id})
+                User.findOne({schoolID: req.body.user_id})
                     .then(user => {
                         console.log(user);
                         console.log(user.seat_id);
@@ -216,7 +218,7 @@ router.post("/chooseSeat",(req,res)=>{
                             const newSeat = {
                                 // storey: seat.storey,
                                 // seat_id: seat.seat_id,
-                                user_now: user._id + '',
+                                user_now: user._id ,
                                 status: '1',
                                 // appointment_time: '',
                             }
@@ -231,9 +233,10 @@ router.post("/chooseSeat",(req,res)=>{
                                 seat_id: req.body.seat_id
                             }
                             console.log(newSeat, newUser);
-                            Seat.updateOne({_id: req.body.seat_id}, newSeat, function(err, ress) {
-                                if(ress) {
-                                    User.findOneAndUpdate({_id: req.body.user_id}, {$set:newUser}, {new:true}).then(user => {
+                            Seat.findOneAndUpdate({seat_id: req.body.seat_id}, {$set:newSeat}, {new:true}).then(seat => {
+                                if(seat) {
+                                    console.log(seat);
+                                    User.findOneAndUpdate({schoolID: req.body.user_id}, {$set:newUser}, {new:true}).then(user => {
                                         res.json({code: 200, user, seat})
                                     })
                                 }else{
@@ -251,7 +254,7 @@ router.post("/chooseSeat",(req,res)=>{
                                 // identity: user.identity,
                                 seat_id: ''
                             }
-                            User.findOneAndUpdate({_id: req.body.user_id}, {$set:newUser}, {new:true}).then(user => {
+                            User.findOneAndUpdate({schoolID: req.body.user_id}, {$set:newUser}, {new:true}).then(user => {
                                 res.json({code: 400, user})
                             })
                         }
@@ -265,20 +268,13 @@ router.post("/chooseSeat",(req,res)=>{
                     status: '0',
                     // appointment_time: '',
                 }
-                Seat.findOneAndUpdate({_id: req.body.seat_id}, {$set:newSeat}, {new:true}).then(seat => {
+                Seat.findOneAndUpdate({seat_id: req.body.seat_id}, {$set:newSeat}, {new:true}).then(seat => {
                     
                     res.json({code: 400, seat})
                     
                 })
             }
         })
-    // Seat.find({storey: req.body.storey})
-    // .then(seats =>{
-    //     res.json({
-    //         code: 200,
-    //         seats
-    //     })
-    // })
 })
 
 module.exports = router //供出router

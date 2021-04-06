@@ -10,7 +10,7 @@ const SeatSchema=new Schema({
         type:String,
         required:true
     },
-    userNow: { //使用者名字
+    user_now: { //使用者名字
 		type: String,
         // type:Schema.Types.ObjectId,//mangoDB提供的方法，根据id拿到user
 		// ref:"user"//和user表关联
