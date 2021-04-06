@@ -53,7 +53,7 @@
       <el-button type="primary" @click="changeOK">换 座</el-button>
     </div>
     <div style="text-align: center">
-      <el-button type="primary">选 座</el-button>
+      <el-button type="primary" @click="pickSeat">选 座</el-button>
     </div>
     <div style="text-align: left">
       <el-button type="primary" @click="appointmentOK">预 约</el-button>
@@ -64,6 +64,7 @@
 <script>
 import myfilters from '@/components/myfilters'
 import api from '@/api'
+import store from '@/store'
 // import { getSeatList } from '@/api/seat/seat'
 import parseTime from '@/utils/index.js'
 
@@ -147,7 +148,7 @@ export default {
     },
 
     //计算预约到期时间 
-  timeMethod(timeLength){
+    timeMethod(timeLength){
     const now = new Date(); //读取当前日期
     const year = now.getFullYear();
     const month = now.getMonth()+1;
@@ -184,6 +185,14 @@ export default {
         })
         }, 36000*2);
       }
+    },
+    // 落座
+    pickSeat(){
+      const name = store.getters.name //从数据仓库拿信息
+      // console.log(name)
+      // api.pickSeat({seat_id:this.chooseClick[0].seat_id,user_now:name,status:'1'}).then(res =>{
+        // console.log(res)
+      // })
     },
     // 换位按钮(没用了)
     changeOK() {

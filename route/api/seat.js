@@ -117,8 +117,8 @@ router.post("/appointment", (req,res) => {
     if(req.body.status!=='') 
     {
         seatFileFields.status = req.body.status // 获得前端给的值 给seatfileFields对象赋值0
-        // seatFileFields.appointment_time = req.body.appointment_time // 获得前端给的时间即预约过期时间
-        seatFileFields.user_now = req.body.user_id // 获得前端给的时间即预约过期时间
+        seatFileFields.appointment_time = req.body.appointment_time // 获得前端给的时间即预约过期时间
+        // seatFileFields.user_now = req.body.user_id // 获得前端给的时间即预约过期时间
     }
     console.log(seatFileFields)
     const whereStr = {seat_id: req.body.seat_id};  // 查询条件
@@ -134,6 +134,32 @@ router.post("/appointment", (req,res) => {
 
 })
 
+
+// 座位落座
+//$route POST api/seat/pickSeat
+//@desc 前端提供 要坐的seatid 使用者名字
+//@access public 
+router.post("/pickSeat", (req,res) => {
+    console.log(req.body)
+    const seatFileFields = {}
+    if(req.body.status!=='') 
+    {
+        seatFileFields.status = req.body.status // 获得前端给的值 给seatfileFields对象赋值0
+        seatFileFields.user_now = req.body.user_now // 获得前端给的时间即预约过期时间
+    }
+    console.log(seatFileFields)
+    const whereStr = {seat_id: req.body.seat_id};  // 查询条件
+    const updateStr = seatFileFields
+    Seat.updateOne(whereStr, updateStr, function(err, ress) {
+        if (err) throw err;
+        console.log("更新成功");
+        const result = {}
+        result.code = 200
+        result.msg = "座位入座成功"
+        res.json(result)
+    })
+
+})
 
 
 // 座位查询

@@ -32,10 +32,10 @@ router.post("/register", (req,res) => {
     }
 
     // 查询数据库是否拥有一卡通
-    User.findOne({schoolID: req.body.schoolID})
+    User.findOne({school_id: req.body.school_id})
         .then((user) => {
             if(user) {
-                return res.json({schoolID: "该一卡通已被注册！", code: 400})
+                return res.json({school_id: "该一卡通已被注册！", code: 400})
             }else{
                 // 头像
                 const avatar = gravatar.url(req.body.email, {
@@ -45,7 +45,7 @@ router.post("/register", (req,res) => {
                   });
 
                 const newUser = new User({
-                    schoolID: req.body.schoolID,
+                    school_id: req.body.school_id,
                     name: req.body.name,
                     email: req.body.email,
                     college: req.body.college,
@@ -84,20 +84,20 @@ router.post("/login", (req,res) => {
     }
 
 
-    const schoolID = req.body.schoolID;
+    const school_id = req.body.school_id;
     const password = req.body.password;
     // 查询数据库
-    User.findOne({schoolID})
+    User.findOne({school_id})
         .then(user => {
             if(!user){
-                return res.json({schoolID: "用户不存在！", code: 400})
+                return res.json({school_id: "用户不存在！", code: 400})
             }
 
             // 密码匹配
             bcrypt.compare(password,user.password)
                   .then(isMatch => {
                         if(isMatch){
-                            const rule = {id: user.id,name: user.name,schoolID: user.schoolID, identity: user.identity }
+                            const rule = {id: user.id,name: user.name,school_id: user.school_id, identity: user.identity }
                             //jwt.sign("规则","加密名字","{过期时间}","箭头函数")
                             jwt.sign(rule, keys.secretOrKey, {expiresIn: 3600}, (err,token) => {
                                 if(err) throw err;
@@ -123,7 +123,7 @@ router.get("/current", passport.authenticate("jwt", {session: false}), (req,res)
         res.json({
             code: 200,
             id: req.user.id,
-            schoolID: req.user.schoolID,
+            school_id: req.user.school_id,
             name: req.user.name,
             email: req.user.email,
             college: req.user.college,
@@ -154,24 +154,24 @@ router.get("/allUser",(req,res)=>{
 
 router.post("/userQuery", (req,res) => {
 
-    const { schoolID } = req.body
-    if(!schoolID || schoolID.length !== 10) {
+    const { school_id } = req.body
+    if(!school_id || school_id.length !== 10) {
         return res.json({
             code: 400,
             message: '请输入正确的学号'
         });
     }
-    console.log(schoolID.length !== 10);
+    console.log(school_id.length !== 10);
     
     // 查询数据库
-    User.findOne({schoolID})
+    User.findOne({school_id})
         .then(user => {
             if(!user){
-                return res.json({schoolID: "用户不存在！", code: 400})
+                return res.json({school_id: "用户不存在！", code: 400})
             }
             const newUser = {
                 id: user._id,
-                schoolID: user.schoolID,
+                school_id: user.school_id,
                 name: user.name,
                 identity: user.identity,
                 college: user.college,
