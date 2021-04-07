@@ -5,6 +5,7 @@ const router = express.Router();
 const keys = require("../../config/keys.js");
 const Seat = require("../../models/Seat")
 const User = require("../../models/User")
+const Seat_User = require("../../models/Seat_User")
 
 //$route GET api/seat/test
 //@desc 返回请求的json数据
@@ -252,7 +253,8 @@ router.get("/getStorey",(req,res)=>{
         })
     })
 })
-// 查看全部座位 表格展示 统计
+
+// 选择座位
 //$route POST api/seat/chooseSeat
 //@desc 管理员查询所有座位 做统计等 前端做调用该接口限制
 //@access public
@@ -328,6 +330,52 @@ router.post("/chooseSeat",(req,res)=>{
                 })
             }
         })
+})
+
+//$route POST api/seat/using
+//@desc 返回请求的json数据
+//@access public 看是否为公开接口还是私有 
+router.get("/using", (req,res) => {
+    Seat.find({storey: req.query.storey}).then(seats => {
+        if(seats) {
+            Seat_User.find({
+                $or: [{seat_type: '0', status: '0'}, {seat_type: '1', seat_begin: {$lte: (new Date().getTime() + 3600000) + '', $gte: (new Date().getTime() + '')}}]
+            })
+            .populate({path: 'seat_id', select: '_id seat_id', match: {storey: req.query.storey}}).populate('user_id', '_id name').then(seat_user => {
+                console.log(seat_user);
+                if(seat_user) {
+                    const using = {
+                        seat_id: [],
+                        seat_message: []
+                    }
+                    seat_user.forEach(item => {
+                        if(item.seat_id) {
+                            using.seat_id.push(item.seat_id._id + '')
+                            const seatMessage = {
+                                seatType: item.seat_type,
+                                seatBegin: item.seat_begin,
+                                // name: item.user_id.name
+                            }
+                            using.seat_message.push(seatMessage)
+                        }
+                    })
+                    seats.forEach(item => {
+                        let index = using.seat_id.indexOf(item._id + '')
+                        if(index >= 0) {
+                            item.status = '1'
+                            console.log(using.seat_message[index]);
+                            item.seat_message = using.seat_message[index]
+                        }
+                    })
+                    res.json({seats})
+                } else {
+                    res.json({code: 200, seats})
+                }
+            })
+        } else {
+            res.json({code: 400, errors: '无座位'})
+        }
+    })
 })
 
 module.exports = router //供出router
