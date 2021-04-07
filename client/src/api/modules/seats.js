@@ -5,7 +5,9 @@ export default {
   getSeat(params) {
     return api({ url: 'api/seat/find', params, method: 'post' })
   },
-
+  getAllSeat(params) {
+    return api({ url: 'api/seat/allSeat', params, method: 'get' })
+  },
   // 预约座位
   postAppointmentSeat(params) {
     return api({ url: 'api/seat/appointment', params, method: 'post' })

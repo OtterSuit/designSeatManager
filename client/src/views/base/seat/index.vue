@@ -20,7 +20,7 @@
       border
     >
       <el-table-column
-        prop="seatID"
+        prop="seat_id"
         label="座位号"
       />
       <el-table-column
@@ -69,7 +69,7 @@
           <el-row>
             <el-col :span="11">
               <el-form-item label="座位号">
-                <el-input v-model="form.seatID" />
+                <el-input v-model="form.seat_id" />
               </el-form-item>
             </el-col>
             <el-col :span="11">

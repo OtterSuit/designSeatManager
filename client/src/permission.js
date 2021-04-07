@@ -6,7 +6,7 @@ import 'nprogress/nprogress.css' // progress bar style
 import { getToken } from '@/utils/auth' // get token from cookie
 import getPageTitle from '@/utils/get-page-title'
 import Cookies from 'js-cookie'
-import jwt_decode from "jwt-decode";
+import jwt_decode from 'jwt-decode'
 
 NProgress.configure({ showSpinner: false }) // NProgress Configuration
 
@@ -29,26 +29,26 @@ router.beforeEach(async(to, from, next) => {
       NProgress.done()
     } else {
       const hasGetUserInfo = store.getters.name
-      console.log(hasGetUserInfo);
+      console.log(hasGetUserInfo)
 
-      const  { exp } = jwt_decode(token)
+      const { exp } = jwt_decode(token)
       const currentTime = Date.now() / 1000
-      if(exp < currentTime) {
+      if (exp < currentTime) {
         await store.dispatch('user/resetToken')
-        next({path: '/login'})
+        next({ path: '/login' })
         Message.error('登陆已过期，请重新登陆')
-      }else{
+      } else {
         if (hasGetUserInfo) {
-          if(to.meta.identity === 'admin' && store.getters.identity !== 'admin' && Cookies.get('Identity') !== 'admin'){
-            next({path: '/404'})
+          if (to.meta.identity === 'admin' && store.getters.identity !== 'admin' && Cookies.get('Identity') !== 'admin') {
+            next({ path: '/404' })
           }
           next()
         } else {
           try {
             // get user info
             const user = await store.dispatch('user/getInfo')
-            if(to.meta.identity === 'admin' && user.identity !== 'admin' && Cookies.get('Identity') !== 'admin'){
-              next({path: '/404'})
+            if (to.meta.identity === 'admin' && user.identity !== 'admin' && Cookies.get('Identity') !== 'admin') {
+              next({ path: '/404' })
             }
             next()
           } catch (error) {
