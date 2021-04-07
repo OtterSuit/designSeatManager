@@ -165,12 +165,12 @@ export default {
         4: 'fifth'
       },
       top: {
-        first: {},
-        second: {},
-        third: {},
-        forth: {},
-        fifth: {},
-        sixth: {}
+        first: { registCount: 0 },
+        second: { registCount: 0 },
+        third: { registCount: 0 },
+        forth: { registCount: 0 },
+        fifth: { registCount: 0 },
+        sixth: { registCount: 0 }
       },
       lineStyle: {
         height: '280px',
@@ -180,7 +180,7 @@ export default {
         {
           name: '发生次数',
           type: 'line',
-          data: [1],
+          data: [],
           smooth: true,
           areaStyle: {
             color: 'rgba(64, 158, 255,.4)'
