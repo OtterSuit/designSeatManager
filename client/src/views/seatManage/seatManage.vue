@@ -16,8 +16,11 @@
     <!-- 座位列表的展示区域 start -->
     <div class="seat" style="overflow-y:scroll; height:70vh">
       <div style="text-align: left; color: #ccc; font-weight: 600">
-        <el-card shadow="hover">
+        <el-card v-if="haveSeat === ''" shadow="hover">
           欢迎选座
+        </el-card>
+        <el-card v-else shadow="hover">
+          您的位置：{{ haveSeat }}
         </el-card>
       </div>
       <div class="seat_left">
@@ -49,7 +52,7 @@
       </div>
       <!-- 展示end -->
     </div>
-    <div style="text-align: right">
+    <div>
       <el-button type="primary" @click="changeOK">换 座</el-button>
     </div>
     <div style="text-align: center">
@@ -58,13 +61,16 @@
     <div style="text-align: left">
       <el-button type="primary" @click="appointmentOK">预 约</el-button>
     </div>
+    <div style="text-align: center">
+      <el-button type="primary" @click="outAllSeat">管理员一键退座</el-button>
+    </div>
   </div>
 </template>
 
 <script>
 import myfilters from '@/components/myfilters'
 import api from '@/api'
-// import store from '@/store'
+import store from '@/store'
 // import { getSeatList } from '@/api/seat/seat'
 // import parseTime from '@/utils/index.js'
 
@@ -81,7 +87,8 @@ export default {
   data() {
     return {
       leftlist: [], // 该楼层的所有座位
-      chooseClick: [] // 选中的空座位
+      chooseClick: [], // 选中的空座位
+      haveSeat: '' // 是否有座位号
     }
   },
   watch: {
@@ -94,6 +101,11 @@ export default {
       api.getSeat({ storey: newVal }).then(res => {
         console.log(res)
         this.leftlist = res.item
+      })
+      const school_id = store.getters.schoolId
+      api.getUser({ school_id: school_id }).then(res => {
+        console.log(res)
+        this.haveSeat = res.item.seat_id // 告知用户他的座位号
       })
     }
   },
@@ -188,12 +200,33 @@ export default {
     },
     // 落座
     pickSeat() {
-      // const name = store.getters.name // 从数据仓库拿信息
-      // console.log(name)
-      // api.pickSeat({seat_id:this.chooseClick[0].seat_id,user_now:name,status:'1'}).then(res =>{
-      // console.log(res)
-      // })
+      const name = store.getters.name // 从数据仓库拿信息
+      const school_id = store.getters.schoolId
+      console.log(name + school_id)
+      api.pickSeat({ seat_id: this.chooseClick[0].seat_id, user_now: name, status: '1' }).then(res => {
+        console.log(res)
+      })
+      api.postUserPickSeat({ seat_id: this.chooseClick[0].seat_id, school_id: school_id }).then(res => {
+        console.log(res)
+        if (res) {
+          api.getUser({ school_id: school_id }).then(res => {
+            console.log(res)
+            this.haveSeat = res.item.seat_id // 告知用户他的座位号
+          })
+        } 
+      })
     },
+
+    // 一键退座
+    outAllSeat() {
+      api.outAllSeat().then(res => {
+        console.log(res)
+      })
+      api.poostOutAllSeat().then(res => {
+        console.log(res)
+      })
+    },
+
     // 换位按钮(没用了)
     changeOK() {
       if (this.chooseClick.length === 2) {

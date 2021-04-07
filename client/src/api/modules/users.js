@@ -18,5 +18,13 @@ export default {
   },
   getUser(params) {
     return api({ url: 'api/users/userQuery', params, method: 'post' })
+  },
+  // user落座
+  postUserPickSeat(params) {
+    return api({ url: 'api/users/pickSeat', params, method: 'post' })
+  },
+  // user全退
+  poostOutAllSeat(params) {
+    return api({ url: 'api/users/outALLSeat', params, method: 'post' })
   }
 }

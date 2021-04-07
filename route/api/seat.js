@@ -161,6 +161,33 @@ router.post("/pickSeat", (req,res) => {
 
 })
 
+// 座位退座(一键退座)
+//$route POST api/seat/outAllSeat
+//@desc 
+//@access public 
+router.post("/outAllSeat", (req,res) => {
+    const seatOut = {}
+    seatOut.status = '0';
+    seatOut.user_now = '';
+    const whereStr = {status: '1'};  // 查询条件
+    const updateStr = seatOut ;
+    // Seat.find(whereStr).then(item =>{
+    //     res.json({
+    //         code:200,
+    //         msg:"一键退座",
+    //         item
+    //     })
+    // })
+    Seat.update(whereStr, updateStr, function(err, ress) {
+        if (err) throw err;
+        console.log("更新成功");
+        const result = {}
+        result.code = 200
+        result.msg = "座位退座成功"
+        res.json(result)
+    })
+
+})
 
 // 座位查询
 //$route POST api/seat/find

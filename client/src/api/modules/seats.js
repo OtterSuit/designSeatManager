@@ -21,5 +21,9 @@ export default {
   // 入座
   pickSeat(params) {
     return api({ url: 'api/seat/pickSeat', params, method: 'post' })
+  },
+  // 一键退座
+  outAllSeat(params) {
+    return api({ url: 'api/seat/outAllSeat', params, method: 'post' })
   }
 }
