@@ -18,5 +18,5 @@ export default {
   },
   getUser(params) {
     return api({ url: 'api/users/userQuery', params, method: 'post' })
-  },
+  }
 }

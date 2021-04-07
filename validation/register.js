@@ -6,7 +6,7 @@ module.exports = function validateRegisterInput(data){//data是一个形参来�
 	
 	//确保都是字符串
 	data.name = !isEmpty(data.name) ? data.name : ''
-    data.schoolID = !isEmpty(data.schoolID) ? data.schoolID : ''
+    data.school_id = !isEmpty(data.school_id) ? data.school_id : ''
     data.college =  !isEmpty(data.college) ? data.college : ''
 	data.password = !isEmpty(data.password) ? data.password : ''
 	data.password2 = !isEmpty(data.password2) ? data.password2 : ''
@@ -18,11 +18,11 @@ module.exports = function validateRegisterInput(data){//data是一个形参来�
 		errors.name = "名字不能为空"
     }
 
-    if(Validator.isEmpty(data.schoolID)) {
-		errors.schoolID = "一卡通码不能为空"
+    if(Validator.isEmpty(data.school_id)) {
+		errors.school_id = "一卡通码不能为空"
 	}
-    if(!Validator.isLength(data.schoolID,{min:10, max:10})) {
-		errors.schoolID = "请输入正确的一卡通"
+    if(!Validator.isLength(data.school_id,{min:10, max:10})) {
+		errors.school_id = "请输入正确的一卡通"
 	}	
     
     if(Validator.isEmpty(data.college)) {

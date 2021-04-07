@@ -40,7 +40,7 @@
               }"
               @click="chooseSeat(item)"
             >
-              <div class="seatLabelstyle">{{item._id}}</div>
+              <div class="seatLabelstyle">{{ item._id }}</div>
             </li>
           </div>
         </ul>
@@ -65,7 +65,7 @@
       <el-form label-width="180px">
         <el-form-item label="学生学号">
           <el-input
-            v-model="schoolID"
+            v-model="school_id"
             style="width: 50%"
             placeholder="请输入学生学号"
             @submit.native.prevent
@@ -74,7 +74,7 @@
             class="searchIcon"
             type="primary"
             icon="el-icon-search"
-            :disabled="schoolID.trim()===''"
+            :disabled="school_id.trim()===''"
             @click="queryMessage"
           >查询</el-button>
         </el-form-item>
@@ -87,7 +87,7 @@
         <el-row :gutter="30">
           <el-col :span="6">
             <el-form-item label="学号:">
-              {{ query.schoolID }}
+              {{ query.school_id }}
             </el-form-item>
           </el-col>
           <el-col :span="6">
@@ -162,7 +162,7 @@
           >
             <el-table-column label="时间" prop="date" />
             <el-table-column label="楼层" prop="floor" />
-            <el-table-column label="座位号" prop="id"  />
+            <el-table-column label="座位号" prop="id" />
             <el-table-column label="备注" prop="remark" />
           </el-table>
           <!-- table end -->
@@ -191,7 +191,7 @@ export default {
       chooseAfterValue: [],
       seatList: [],
       dialogVisible: false,
-      schoolID: '', // 查询输入
+      school_id: '', // 查询输入
       queryBtn: true, // 查询按钮
       query: {},
       tableData: [
@@ -242,13 +242,13 @@ export default {
       //     })
       //   }
       // })
-      // api.getUser({schoolID: '1706300053'}).then(res => {
+      // api.getUser({school_id: '1706300053'}).then(res => {
       //   console.log(res);
       // })
     },
     floorChange() {
-      api.getStorey({storey: this.drawer.floor}).then(res => {
-        console.log(res);
+      api.getStorey({ storey: this.drawer.floor }).then(res => {
+        console.log(res)
         this.seatList = res.seats
       })
       // this.seatList = this.seatMessage.filter(item => {
@@ -277,8 +277,8 @@ export default {
     // 确认选座
     seatconfirm() {
       if (this.seatChoosed !== '') {
-        api.chooseSeat({seat_id: this.seatChoosed, user_id: this.query.id}).then(res => {
-          console.log(res);
+        api.chooseSeat({ seat_id: this.seatChoosed, user_id: this.query.id }).then(res => {
+          console.log(res)
         })
         if (this.query.status) {
           // this.chooseAfterValue.splice(this.chooseAfterValue.length - 1, 1, this.seatChoosed)
@@ -303,12 +303,12 @@ export default {
     },
     queryMessage() {
       this.isQuery = false
-      api.getUser({schoolID: this.schoolID}).then(res => {
-        console.log(res);
-          this.query = res.item
-          this.isQuery = true
+      api.getUser({ school_id: this.school_id }).then(res => {
+        console.log(res)
+        this.query = res.item
+        this.isQuery = true
       })
-    },
+    }
   }
 }
 </script>

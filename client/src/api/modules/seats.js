@@ -19,5 +19,5 @@ export default {
   // 入座
   pickSeat(params) {
     return api({ url: 'api/seat/pickSeat', params, method: 'post' })
-  },
+  }
 }

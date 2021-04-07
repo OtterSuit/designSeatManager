@@ -236,7 +236,7 @@ router.post("/chooseSeat",(req,res)=>{
         .then(seat => {
             console.log(seat);
             if(seat.status === '0') {
-                User.findOne({schoolID: req.body.user_id})
+                User.findOne({school_id: req.body.user_id})
                     .then(user => {
                         console.log(user);
                         console.log(user.seat_id);
@@ -249,7 +249,7 @@ router.post("/chooseSeat",(req,res)=>{
                                 // appointment_time: '',
                             }
                             const newUser = {
-                                // schoolID: user.schoolID,
+                                // school_id: user.school_id,
                                 // name: user.name,
                                 // email: user.email,
                                 // college: user.college,
@@ -262,7 +262,7 @@ router.post("/chooseSeat",(req,res)=>{
                             Seat.findOneAndUpdate({seat_id: req.body.seat_id}, {$set:newSeat}, {new:true}).then(seat => {
                                 if(seat) {
                                     console.log(seat);
-                                    User.findOneAndUpdate({schoolID: req.body.user_id}, {$set:newUser}, {new:true}).then(user => {
+                                    User.findOneAndUpdate({school_id: req.body.user_id}, {$set:newUser}, {new:true}).then(user => {
                                         res.json({code: 200, user, seat})
                                     })
                                 }else{
@@ -271,7 +271,7 @@ router.post("/chooseSeat",(req,res)=>{
                             })
                         }else{
                             const newUser = {
-                                // schoolID: user.schoolID,
+                                // school_id: user.school_id,
                                 // name: user.name,
                                 // email: user.email,
                                 // college: user.college,
@@ -280,7 +280,7 @@ router.post("/chooseSeat",(req,res)=>{
                                 // identity: user.identity,
                                 seat_id: ''
                             }
-                            User.findOneAndUpdate({schoolID: req.body.user_id}, {$set:newUser}, {new:true}).then(user => {
+                            User.findOneAndUpdate({school_id: req.body.user_id}, {$set:newUser}, {new:true}).then(user => {
                                 res.json({code: 400, user})
                             })
                         }

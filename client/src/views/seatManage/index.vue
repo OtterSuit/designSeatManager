@@ -45,11 +45,11 @@ export default {
   },
   methods: {
     fetchData() {
-      api.getSeat.then(res=>{
+      api.getSeat.then(res => {
         console.log(res)
       })
 
-      //注释为mock服务器时模拟接口
+      // 注释为mock服务器时模拟接口
       // getSeatInfo().then(res => {
       //   this.seatMessage = res.data.items.seatMessage
       //   getPeopleInfo().then(res => {

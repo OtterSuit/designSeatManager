@@ -31,7 +31,7 @@
             }"
             @click="choosely(index, item)"
           >
-          <!-- calling: item.status === '0'&& item.user_now !== '', -->
+            <!-- calling: item.status === '0'&& item.user_now !== '', -->
             <div
               v-if="chooseClick.indexOf(item) > -1"
               class="jiaobiao"
@@ -64,9 +64,9 @@
 <script>
 import myfilters from '@/components/myfilters'
 import api from '@/api'
-import store from '@/store'
+// import store from '@/store'
 // import { getSeatList } from '@/api/seat/seat'
-import parseTime from '@/utils/index.js'
+// import parseTime from '@/utils/index.js'
 
 export default {
   components: {
@@ -80,7 +80,7 @@ export default {
   },
   data() {
     return {
-      leftlist: [], //该楼层的所有座位
+      leftlist: [], // 该楼层的所有座位
       chooseClick: [] // 选中的空座位
     }
   },
@@ -91,7 +91,7 @@ export default {
       //   console.log(res)
       //   this.leftlist = res.data.items
       // })
-      api.getSeat({storey:newVal}).then(res=>{
+      api.getSeat({ storey: newVal }).then(res => {
         console.log(res)
         this.leftlist = res.item
       })
@@ -102,7 +102,7 @@ export default {
     //   console.log(res)
     //   this.leftlist = res.data.items
     // })
-    api.getSeat({storey:this.title}).then(res => {
+    api.getSeat({ storey: this.title }).then(res => {
       console.log(res)
       this.leftlist = res.item
     })
@@ -123,8 +123,8 @@ export default {
       if (this.chooseClick.indexOf(n) !== -1) {
         return
       }
-      if(this.chooseClick.length === 2){
-      this.chooseClick.splice(0,1)
+      if (this.chooseClick.length === 2) {
+        this.chooseClick.splice(0, 1)
       }
       // console.log(this.chooseClick)
 
@@ -147,51 +147,51 @@ export default {
       // }
     },
 
-    //计算预约到期时间 
-    timeMethod(timeLength){
-    const now = new Date(); //读取当前日期
-    const year = now.getFullYear();
-    const month = now.getMonth()+1;
-    const day = now.getDate();
-    const hour = now.getHours();
-    const minutes = now.getMinutes();
-    const seconds = now.getSeconds();
-    // console.log(now.getMinutes())
-    // console.log(minutesTemp)
-    now.setMinutes(now.getMinutes()+timeLength);// 加上预约时间
-    const newMinutes = now.getMinutes()
-    const newHours = now.getHours()
-    const time_str = year+'-'+month+'-'+day+'-'+hour+'-'+minutes+'-'+seconds;
-    const time_str2 = year+'-'+month+'-'+day+'-'+newHours+'-'+newMinutes+'-'+seconds; 
-    // console.log(time_str);
-    // console.log(time_str2)
-    return time_str2
+    // 计算预约到期时间
+    timeMethod(timeLength) {
+      const now = new Date() // 读取当前日期
+      const year = now.getFullYear()
+      const month = now.getMonth() + 1
+      const day = now.getDate()
+      // const hour = now.getHours()
+      // const minutes = now.getMinutes()
+      const seconds = now.getSeconds()
+      // console.log(now.getMinutes())
+      // console.log(minutesTemp)
+      now.setMinutes(now.getMinutes() + timeLength)// 加上预约时间
+      const newMinutes = now.getMinutes()
+      const newHours = now.getHours()
+      // const time_str = year + '-' + month + '-' + day + '-' + hour + '-' + minutes + '-' + seconds
+      const time_str2 = year + '-' + month + '-' + day + '-' + newHours + '-' + newMinutes + '-' + seconds
+      // console.log(time_str);
+      // console.log(time_str2)
+      return time_str2
     },
     // 预约按钮
-    appointmentOK(){
-      if(this.chooseClick.length === 1){
+    appointmentOK() {
+      if (this.chooseClick.length === 1) {
         // const nowDate = new Date();
-        let appointment_time = this.timeMethod(2);
-        //选择了空座位且点击预约 调用接口
-        api.postAppointmentSeat({seat_id:this.chooseClick[0].seat_id,status:'2',appointment_time:appointment_time})
-        .then(res =>{
-          console.log(res)
-        })
+        const appointment_time = this.timeMethod(2)
+        // 选择了空座位且点击预约 调用接口
+        api.postAppointmentSeat({ seat_id: this.chooseClick[0].seat_id, status: '2', appointment_time: appointment_time })
+          .then(res => {
+            console.log(res)
+          })
         setTimeout(() => {
-        api.postAppointmentSeat({seat_id:this.chooseClick[0].seat_id,status:'0',appointment_time:''})
-        .then(res =>{
-          console.log(res)
-          console.log("预约已过期！")
-        })
-        }, 36000*2);
+          api.postAppointmentSeat({ seat_id: this.chooseClick[0].seat_id, status: '0', appointment_time: '' })
+            .then(res => {
+              console.log(res)
+              console.log('预约已过期！')
+            })
+        }, 36000 * 2)
       }
     },
     // 落座
-    pickSeat(){
-      const name = store.getters.name //从数据仓库拿信息
+    pickSeat() {
+      // const name = store.getters.name // 从数据仓库拿信息
       // console.log(name)
       // api.pickSeat({seat_id:this.chooseClick[0].seat_id,user_now:name,status:'1'}).then(res =>{
-        // console.log(res)
+      // console.log(res)
       // })
     },
     // 换位按钮(没用了)

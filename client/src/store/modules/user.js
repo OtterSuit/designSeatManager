@@ -1,9 +1,9 @@
-import { login, logout, getInfo } from '@/api/user'
+// import { login, logout, getInfo } from '@/api/user'
 import { getToken, setToken, removeToken } from '@/utils/auth'
 import { resetRouter } from '@/router'
 import api from '@/api'
-import jwt_decode from "jwt-decode";
-import Cookies from 'js-cookie';
+import jwt_decode from 'jwt-decode'
+import Cookies from 'js-cookie'
 
 const getDefaultState = () => {
   return {
@@ -35,7 +35,7 @@ const mutations = {
   },
   SET_SCHOOLID: (state, schoolId) => {
     state.schoolId = schoolId
-  },
+  }
 }
 
 const actions = {
@@ -70,15 +70,14 @@ const actions = {
           return reject('认证错误，请重新登陆')
         }
 
-        const { name, avatar, identity } = data
+        const { name, avatar, identity, school_id } = data
 
-        console.log(name, avatar, identity);
+        console.log(name, avatar, identity)
         commit('SET_NAME', name)
         commit('SET_AVATAR', avatar)
         commit('SET_IDENTITY', identity)
         commit('SET_SCHOOLID', school_id)
         Cookies.set('Identity', identity)
-
 
         resolve(data)
       }).catch(error => {
@@ -90,15 +89,15 @@ const actions = {
   // user logout
   logout({ commit, state }) {
     // return new Promise((resolve, reject) => {
-      // logout(state.token).then(() => {
-      removeToken() // must remove  token  first
-      resetRouter()
-      commit('RESET_STATE')
-      Cookies.remove('Identity')
-      // resolve()
-      // }).catch(error => {
-      //   reject(error)
-      // })
+    // logout(state.token).then(() => {
+    removeToken() // must remove  token  first
+    resetRouter()
+    commit('RESET_STATE')
+    Cookies.remove('Identity')
+    // resolve()
+    // }).catch(error => {
+    //   reject(error)
+    // })
     // })
   },
 

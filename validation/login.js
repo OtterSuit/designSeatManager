@@ -5,12 +5,12 @@ module.exports = function validateLoginInput(data) {//data是一个形参来接�
 	let errors = {};
 	
 	//确保都是字符串
-	data.email = !isEmpty(data.schoolID) ? data.schoolID : ''
+	data.email = !isEmpty(data.school_id) ? data.school_id : ''
 	data.password = !isEmpty(data.password) ? data.password : ''
 
 	
-	if(Validator.isEmpty(data.schoolID)) {
-		errors.schoolID = "一卡通不能为空"
+	if(Validator.isEmpty(data.school_id)) {
+		errors.school_id = "一卡通不能为空"
 	}
 
 	

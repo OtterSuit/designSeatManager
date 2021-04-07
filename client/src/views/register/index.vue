@@ -9,15 +9,15 @@
       <el-row type="flex" class="register-main">
         <el-col>
           <div class="register-title">注册账号</div>
-          <el-form-item prop="schoolID">
+          <el-form-item prop="school_id">
             <span class="svg-container">
               <i class="el-icon-user" />
             </span>
             <el-input
-              ref="schoolID"
-              v-model="registerForm.schoolID"
+              ref="school_id"
+              v-model="registerForm.school_id"
               placeholder="请输入学号"
-              name="schoolID"
+              name="school_id"
               type="text"
             />
           </el-form-item>
@@ -166,7 +166,7 @@ export default {
         }
       ],
       registerForm: {
-        schoolID: '',
+        school_id: '',
         name: '',
         college: '',
         password: '',
@@ -174,8 +174,8 @@ export default {
         identity: 'user'
       },
       registerRules: {
-        // schoolID: [{ required: true, trigger: 'blur', validator: validateUsername }],
-        schoolID: [
+        // school_id: [{ required: true, trigger: 'blur', validator: validateUsername }],
+        school_id: [
           { required: true, trigger: 'blur', message: '请输入学号' },
           { min: 10, max: 10, message: '请正确输入学号' }],
         name: [

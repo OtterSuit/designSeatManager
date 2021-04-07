@@ -21,7 +21,7 @@
       border
     >
       <el-table-column
-        prop="schoolID"
+        prop="school_id"
         label="学号"
       />
       <el-table-column
@@ -78,8 +78,8 @@
         <el-form ref="form" :model="form" label-width="100px" :rules="rules">
           <el-row type="flex">
             <el-col :span="11">
-              <el-form-item label="学号" prop="schoolID">
-                <el-input ref="idInput" v-model.number="form.schoolID" />
+              <el-form-item label="学号" prop="school_id">
+                <el-input ref="idInput" v-model.number="form.school_id" />
               </el-form-item>
             </el-col>
             <el-col :span="11">
@@ -132,7 +132,7 @@ export default {
   data() {
     return {
       rules: {
-        schoolID: [
+        school_id: [
           { required: true, message: '请输入学号', trigger: 'blur' }
         ],
         name: [
@@ -171,7 +171,7 @@ export default {
       //   this.tableData = this.table.slice(0, this.pageSize)
       // })
       api.getAllUser().then(res => {
-        console.log(res);
+        console.log(res)
         this.table = res.result
         this.oldTable = JSON.parse(JSON.stringify(this.table))
         this.total = this.oldTable.length
@@ -225,7 +225,7 @@ export default {
       }
     },
     formatIdentity(row, index) {
-      return row.identity === "admin" ? '管理员' : '用户'
+      return row.identity === 'admin' ? '管理员' : '用户'
     },
     addClick() {
       this.edit = false

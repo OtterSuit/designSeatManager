@@ -47,7 +47,7 @@ router.post("/choose", (req,res) => {
     //                 })
     //         }
     //         // if(seat.status === '0') {
-    //         //     User.findOne({schoolID: req.body.user_id})
+    //         //     User.findOne({school_id: req.body.user_id})
     //         //         .then(user => {
     //         //             console.log(user);
     //         //             console.log(user.seat_id);
@@ -60,7 +60,7 @@ router.post("/choose", (req,res) => {
     //         //                     // appointment_time: '',
     //         //                 }
     //         //                 const newUser = {
-    //         //                     // schoolID: user.schoolID,
+    //         //                     // school_id: user.school_id,
     //         //                     // name: user.name,
     //         //                     // email: user.email,
     //         //                     // college: user.college,
@@ -73,7 +73,7 @@ router.post("/choose", (req,res) => {
     //         //                 Seat.findOneAndUpdate({seat_id: req.body.seat_id}, {$set:newSeat}, {new:true}).then(seat => {
     //         //                     if(seat) {
     //         //                         console.log(seat);
-    //         //                         User.findOneAndUpdate({schoolID: req.body.user_id}, {$set:newUser}, {new:true}).then(user => {
+    //         //                         User.findOneAndUpdate({school_id: req.body.user_id}, {$set:newUser}, {new:true}).then(user => {
     //         //                             res.json({code: 200, user, seat})
     //         //                         })
     //         //                     }else{
@@ -82,7 +82,7 @@ router.post("/choose", (req,res) => {
     //         //                 })
     //         //             }else{
     //         //                 const newUser = {
-    //         //                     // schoolID: user.schoolID,
+    //         //                     // school_id: user.school_id,
     //         //                     // name: user.name,
     //         //                     // email: user.email,
     //         //                     // college: user.college,
@@ -91,7 +91,7 @@ router.post("/choose", (req,res) => {
     //         //                     // identity: user.identity,
     //         //                     seat_id: ''
     //         //                 }
-    //         //                 User.findOneAndUpdate({schoolID: req.body.user_id}, {$set:newUser}, {new:true}).then(user => {
+    //         //                 User.findOneAndUpdate({school_id: req.body.user_id}, {$set:newUser}, {new:true}).then(user => {
     //         //                     res.json({code: 400, user})
     //         //                 })
     //         //             }
@@ -136,6 +136,57 @@ router.post("/check", (req,res) => {
             })
         }
     })
+})
+
+//$route POST api/seat_user/using
+//@desc 返回请求的json数据
+//@access public 看是否为公开接口还是私有 
+router.get("/using", (req,res) => {
+    // Seat_User.find({status: '1'}).then(seat_user => {
+    //     console.log(seat_user);
+    //     if(seat_user) {
+    //         res.json({code: 200, seat_user})
+    //     } else {
+    //         Seat_User.find().then(seat_user => {
+    //             console.log(seat_user);
+    //             res.json(seat_user)
+    //         })
+    //     }
+    // })
+    
+    Seat.find().then(seats => {
+        if(seats) {
+            Seat_User.find({seat_type: '0'}, {seat_begin: 1}).populate('seat_id', '_id seat_id').populate('user_id', '_id name').then(seat_user => {
+                if(seat_user) {
+                    const using = {
+                        seat_id: [],
+                        seat_user: []
+                    }
+                    seat_user.forEach(item => {
+                        using.seat_id.push(item.seat_id._id + '')
+                        using.seat_user.push(item.user_id.name)
+                    })
+                    seats.forEach(item => {
+                        let index = using.seat_id.indexOf(item._id + '')
+                        console.log(using.seat_id, item._id + '', index);
+                        if(index >= 0) {
+                            item.status = '1'
+                            item.user_now = using.seat_user[index]
+                        }
+                    })
+                    res.json({seats})
+                } else {
+                    res.json({code: 200, seats})
+                }
+            })
+        } else {
+            res.json({code: 400, errors: '无座位'})
+        }
+    })
+    // Seat_User.find({seat_type: '0'}).populate('user_id').then(seat_user => {
+    //     console.log(seat_user);
+    //     res.json(seat_user)
+    // })
 })
 
 module.exports = router
