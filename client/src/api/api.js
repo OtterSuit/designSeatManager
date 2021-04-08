@@ -2,13 +2,13 @@ import axios from 'axios'
 import qs from 'qs'
 import APIconfig from '@/api/APIconfig'
 // import router from '../router'
-// import store from '../store'
+import store from '../store'
 // import Cookies from 'js-cookie'
 
 import { getToken } from '@/utils/auth'
 // import { getToken, getExpireTime, removeToken, setToken, setExpireTime } from '@/utils/auth'
 // import { compareTime } from '@/utils/index'
-// import { Message } from 'element-ui'
+import { Message } from 'element-ui'
 
 // // 是否正在刷新的标志
 // let isTokenRefreshing = false
@@ -38,6 +38,7 @@ const CancelToken = axios.CancelToken
 const source = CancelToken.source()
 axios.interceptors.request.use(
   (config) => {
+    store.dispatch('app/setLoading', true)
     if (config.headers['Content-Type'] === 'application/x-www-form-urlencoded; charset=UTF-8') {
       // config.headers['Content-Type'] = 'application/x-www-form-urlencoded; charset=UTF-8'
       config.transformRequest = [function(data, headers) {
@@ -132,6 +133,10 @@ axios.interceptors.request.use(
 axios.interceptors.response.use(
   (response) => {
     console.log(response.data)
+    if (response.data.code && response.data.code !== 200) {
+      Message.error(response.data.msg)
+    }
+    store.dispatch('app/setLoading', false)
     // if (response.data.code) {
     //   if (response.data.code !== '200' || response.data.data.busiCode !== '1') {
     //     Message.error(response.data.data.msg)
