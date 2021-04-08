@@ -15,9 +15,6 @@ export default {
   getStorey(params) {
     return api({ url: 'api/seat/getStorey', params, method: 'get' })
   },
-  chooseSeat(params) {
-    return api({ url: 'api/seat_user/choose', params, method: 'post' })
-  },
   // 入座
   pickSeat(params) {
     return api({ url: 'api/seat/pickSeat', params, method: 'post' })

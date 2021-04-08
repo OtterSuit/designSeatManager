@@ -43,17 +43,16 @@ const actions = {
   login({ commit }, userInfo) {
     const { username, password } = userInfo
     return new Promise((resolve, reject) => {
-      api.login({ school_id: username.trim(), password: password }).then(response => {
-        const { token } = response
-        commit('SET_TOKEN', token)
-        setToken(token)
-        const { identity } = jwt_decode(token)
-        commit('SET_IDENTITY', identity)
-        commit('SET_SCHOOLID', username)
-        Cookies.set('Identity', identity)
-        // api.getInfo().then(res => {
-        //   console.log(res);
-        // })
+      api.login({ school_id: username.trim(), password: password }).then(res => {
+        if (res.code === 200) {
+          const { token } = res
+          commit('SET_TOKEN', token)
+          setToken(token)
+          const { identity } = jwt_decode(token)
+          commit('SET_IDENTITY', identity)
+          commit('SET_SCHOOLID', username)
+          Cookies.set('Identity', identity)
+        }
         resolve()
       }).catch(error => {
         reject(error)
@@ -64,8 +63,8 @@ const actions = {
   // get user info
   getInfo({ commit, state }) {
     return new Promise((resolve, reject) => {
-      api.getInfo().then(response => {
-        const data = response
+      api.getInfo().then(res => {
+        const data = res
         if (!data) {
           return reject('认证错误，请重新登陆')
         }
