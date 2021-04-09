@@ -26,5 +26,9 @@ export default {
   // user全退
   poostOutAllSeat(params) {
     return api({ url: 'api/users/outALLSeat', params, method: 'post' })
+  },
+  // user个人退座
+  postOutSeat(params) {
+    return api({ url: 'api/users/outSeat', params, method: 'post' })
   }
 }

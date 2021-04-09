@@ -22,5 +22,9 @@ export default {
   // 一键退座
   outAllSeat(params) {
     return api({ url: 'api/seat/outAllSeat', params, method: 'post' })
+  },
+  // 用户退座
+  outSeat(params) {
+    return api({ url: 'api/seat/outSeat', params, method: 'post' })
   }
 }

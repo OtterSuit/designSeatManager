@@ -83,7 +83,7 @@ export const constantRoutes = [
         path: 'seatManage',
         name: 'SeatManage',
         component: () => import('@/views/seatManage'),
-        meta: { title: '座位管理', icon: 'iconzuowei', identity: 'admin' }
+        meta: { title: '来选座', icon: 'iconzuowei' }
       }
     ]
   },
@@ -122,10 +122,10 @@ const createRouter = () => new Router({
 const router = createRouter()
 
 export function resetRouter() {
-  console.log(constantRoutes);
+  console.log(constantRoutes)
   const newRouter = createRouter()
   router.matcher = newRouter.matcher // reset router
-  console.log(router, newRouter);
+  console.log(router, newRouter)
 }
 
 export default router

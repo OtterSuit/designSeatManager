@@ -111,9 +111,9 @@
             <el-form-item label="座位号:">
               <span
                 style="font-size: 14px"
-                :class="statusColor(query.status)"
+                :class="statusColor(query.seat_id)"
               >
-                {{ status(query.status) }}
+                {{ status(query.seat_id) }}
               </span>
             </el-form-item>
           </el-col>
@@ -293,7 +293,12 @@ export default {
       this.drawerOn = false
     },
     status(status) {
-      return status ? '已安排' : '未安排'
+      if (status !== '') {
+        return status
+      } else {
+        return '未安排'
+      }
+      // return status ? status : '未安排'
     },
     statusColor(status) {
       return status ? 'success' : 'error'
@@ -301,7 +306,7 @@ export default {
     seatTitle(status) {
       return status ? '调换座位' : '安排座位'
     },
-    queryMessage() {
+    queryMessage() { // 查询人员
       this.isQuery = false
       api.getUser({ school_id: this.school_id }).then(res => {
         console.log(res)

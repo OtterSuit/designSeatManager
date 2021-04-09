@@ -207,6 +207,30 @@ router.post("/pickSeat", (req,res) => {
     })
 })
 
+//$route POST api/users/outSeat
+//@desc 改变user用户中的seat_id在退座之后（该接口针对单个用户的退座）
+//@access public 
+router.post("/outSeat", (req,res) => {
+    const seatOut = {}
+    seatOut.seat_id = '';
+    const updateStr = seatOut ;
+    const whereStr = {school_id: req.body.school_id};  // 查询条件
+    // User.find({seat_id :/^F/}).then(item =>{
+    //     res.json({
+    //         code:200,
+    //         msg:"一键退座",
+    //         item
+    //     })
+    // })
+    User.updateOne(whereStr,updateStr, function(err, ress) {
+        if (err) throw err;
+        console.log("更新成功");
+        const result = {}
+        result.code = 200
+        result.msg = "个人用户退座成功"
+        res.json(result)
+    })
+})
 
 //$route POST api/users/outAllSeat
 //@desc 改变user用户中的seat_id在退座之后（该接口针对全部用户）
@@ -228,9 +252,8 @@ router.post("/outAllSeat", (req,res) => {
         console.log("更新成功");
         const result = {}
         result.code = 200
-        result.msg = "用户退座成功"
+        result.msg = "全部用户退座成功"
         res.json(result)
     })
-
 })
 module.exports = router;

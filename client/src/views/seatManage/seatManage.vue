@@ -52,17 +52,20 @@
       </div>
       <!-- 展示end -->
     </div>
+    <!--
     <div>
       <el-button type="primary" @click="changeOK">换 座</el-button>
     </div>
+    -->
     <div style="text-align: center">
-      <el-button type="primary" @click="pickSeat">选 座</el-button>
+      <el-button v-if="haveSeat === ''" type="primary" :disabled="chooseClick.length==0?true:false" @click="pickSeat">选 座</el-button>
+      <el-button v-else type="primary" @click="outSeat">退 座</el-button>
     </div>
     <div style="text-align: left">
       <el-button type="primary" @click="appointmentOK">预 约</el-button>
     </div>
     <div style="text-align: center">
-      <el-button type="primary" @click="outAllSeat">管理员一键退座</el-button>
+      <el-button v-if="isAdmin" type="primary" @click="outAllSeat">管理员一键退座</el-button>
     </div>
   </div>
 </template>
@@ -78,6 +81,7 @@ export default {
   components: {
     myfilters
   },
+  inject: ['reload'],
   props: {
     title: {
       type: String,
@@ -88,7 +92,9 @@ export default {
     return {
       leftlist: [], // 该楼层的所有座位
       chooseClick: [], // 选中的空座位
-      haveSeat: '' // 是否有座位号
+      haveSeat: '', // 是否有座位号
+      isShow: true, // 在没有选中某一座位时禁止使用
+      isAdmin: false // 是否是管理员
     }
   },
   watch: {
@@ -107,6 +113,7 @@ export default {
         console.log(res)
         this.haveSeat = res.item.seat_id // 告知用户他的座位号
       })
+      this.chooseClick.length = 0 // 清空数组
     }
   },
   created() {
@@ -117,6 +124,14 @@ export default {
     api.getSeat({ storey: this.title }).then(res => {
       console.log(res)
       this.leftlist = res.item
+    })
+    const school_id = store.getters.schoolId
+    api.getUser({ school_id: school_id }).then(res => {
+      console.log(res)
+      this.haveSeat = res.item.seat_id // 告知用户他的座位号
+      if (res.item.identity === 'admin') {
+        this.isAdmin = true
+      }
     })
   },
   methods: {
@@ -205,6 +220,7 @@ export default {
       console.log(name + school_id)
       api.pickSeat({ seat_id: this.chooseClick[0].seat_id, user_now: name, status: '1' }).then(res => {
         console.log(res)
+        this.reload()
       })
       api.postUserPickSeat({ seat_id: this.chooseClick[0].seat_id, school_id: school_id }).then(res => {
         console.log(res)
@@ -213,14 +229,25 @@ export default {
             console.log(res)
             this.haveSeat = res.item.seat_id // 告知用户他的座位号
           })
-        } 
+        }
       })
     },
-
+    // 用户退座
+    outSeat() {
+      const school_id = store.getters.schoolId
+      api.outSeat({ seat_id: this.haveSeat }).then(res => {
+        console.log(res)
+        this.reload()
+      })
+      api.postOutSeat({ school_id: school_id }).then(res => {
+        console.log(res)
+      })
+    },
     // 一键退座
     outAllSeat() {
       api.outAllSeat().then(res => {
         console.log(res)
+        this.reload()
       })
       api.poostOutAllSeat().then(res => {
         console.log(res)
