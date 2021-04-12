@@ -35,12 +35,13 @@
               v-for="(item, index) in seatList"
               :key="index"
               :class="{
-                active: chooseAfterValue.indexOf(item._id) != -1,
-                choosenow: item._id === seatChoosed,
+                active: chooseAfterValue.indexOf(item.seat_id) != -1,
+                choosenow: item.seat_id === seatChoosed,
+                haveUser: item.user_now !== ''
               }"
               @click="chooseSeat(item)"
             >
-              <div class="seatLabelstyle">{{ item._id }}</div>
+              <div class="seatLabelstyle">{{ item.seat_id }}</div>
             </li>
           </div>
         </ul>
@@ -132,7 +133,7 @@
               @click="seatPlanOn"
             >
               <i class="iconfont iconzuowei" />
-              {{ seatTitle(query.status) }}
+              {{ seatTitle(query.seat_id) }}
             </el-button>
           </el-col>
           <el-col :span="6">
@@ -183,6 +184,7 @@ export default {
     myfilters,
     Mydrawer
   },
+  inject: ['reload'], // 引用注入
   data() {
     return {
       isQuery: false, // 是否查询
@@ -194,26 +196,7 @@ export default {
       school_id: '', // 查询输入
       queryBtn: true, // 查询按钮
       query: {},
-      tableData: [
-        {
-          date: '2020/11/8',
-          floor: '一楼',
-          id: '1',
-          remark: ''
-        },
-        {
-          date: '2020/11/8',
-          floor: '三楼',
-          id: '2',
-          remark: ''
-        },
-        {
-          date: '2020/11/8',
-          floor: '二楼',
-          id: '3',
-          remark: ''
-        }
-      ],
+      tableData: [],
       seatChoosed: '', // 用来浅拷贝
       total: 100,
       pageSize: 20,
@@ -255,9 +238,24 @@ export default {
       //   return item.floor === this.drawer.floor
       // })
     },
-    seatPlanOn() {
-      this.drawerOn = true
-      this.floorChange()
+    seatPlanOn() { // 安排座位或者退座 判断标签决定走哪一步
+      console.log(this.query)
+      if (this.query.seat_id === '') { // 还未有座位 需要安排座位
+        this.drawerOn = true
+        this.floorChange()
+      } else {
+        api.outSeat({ seat_id: this.query.seat_id }).then(res => {
+          console.log(res)
+          this.$message({
+            type: 'success',
+            message: '退座成功'
+          })
+        })
+        api.postOutSeat({ school_id: this.query.school_id }).then(res => {
+          console.log(res)
+          this.reload()
+        })
+      }
     },
     // 抽屉组件
     close() {
@@ -265,27 +263,46 @@ export default {
     },
     // 选座
     chooseSeat(item) {
-      if (this.chooseAfterValue.includes(item._id) && this.query.status !== item._id) {
+      // this.chooseAfterValue.includes(item.seat_id) &&
+      console.log(item)
+      if (item.status !== '0') {
         return this.$message({
           type: 'error',
           message: '对不起，该座有人'
         })
       }
-      this.seatChoosed = item._id
-      this.itemNumSeat = item._id
+      this.seatChoosed = item.seat_id
+      this.itemNumSeat = item.seat_id
     },
     // 确认选座
     seatconfirm() {
-      if (this.seatChoosed !== '') {
-        api.chooseSeat({ seat_id: this.seatChoosed, user_id: this.query.id }).then(res => {
-          console.log(res)
+      api.pickSeat({ seat_id: this.seatChoosed, user_now: this.query.name, status: '1' }).then(res => {
+        console.log(res)
+        this.$message({
+          type: 'success',
+          message: '成功登记入座'
         })
-        if (this.query.status) {
-          // this.chooseAfterValue.splice(this.chooseAfterValue.length - 1, 1, this.seatChoosed)
-        }
-        this.$set(this.query, 'status', this.seatChoosed)
-        this.chooseAfterValue.push(this.seatChoosed)
-      }
+      })
+      api.postUserPickSeat({ seat_id: this.seatChoosed, school_id: this.query.school_id }).then(res => {
+        console.log(res)
+        // if (res) {
+        //   api.getUser({ school_id: this.query.school_id }).then(res => {
+        //     console.log(res)
+        //     this.haveSeat = res.item.seat_id // 告知用户他的座位号
+        //   })
+        // }
+        this.reload()
+      })
+      // if (this.seatChoosed !== '') {
+      //   api.chooseSeat({ seat_id: this.seatChoosed, user_id: this.query.id }).then(res => {
+      //     console.log(res)
+      //   })
+      //   if (this.query.status) {
+      //     // this.chooseAfterValue.splice(this.chooseAfterValue.length - 1, 1, this.seatChoosed)
+      //   }
+      //   this.$set(this.query, 'status', this.seatChoosed)
+      //   this.chooseAfterValue.push(this.seatChoosed)
+      // }
       this.drawerOn = false
     },
     // 换座确认
@@ -304,7 +321,12 @@ export default {
       return status ? 'success' : 'error'
     },
     seatTitle(status) {
-      return status ? '调换座位' : '安排座位'
+      if (status !== '') {
+        return '退座'
+      } else {
+        return '安排座位'
+      }
+      // return status ? '退座' : '安排座位'
     },
     queryMessage() { // 查询人员
       this.isQuery = false
@@ -419,6 +441,9 @@ export default {
   color: #409eff !important;
   border: 1px solid #409eff !important;
   font-weight: 600;
+}
+.haveUser {
+  background: #D9ECFF;
 }
 
 // 改一下滚动条
