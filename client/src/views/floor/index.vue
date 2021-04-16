@@ -11,7 +11,8 @@
     </div>
     <div class="transform">
       <transition name="fade-transform" mode="out-in">
-        <floorSituation :title="activeName" :table-data="tableData[activeName]" />
+        <floorSituation :title="activeName" />
+        <!-- :table-data="tableData[activeName]"  -->
       </transition>
     </div>
   </div>
@@ -19,7 +20,8 @@
 
 <script>
 import floorSituation from './floorSituation'
-import { getPeopleInfo, getSeatInfo } from '@/api/baseData/baseData'
+import api from '@/api'
+// import { getPeopleInfo, getSeatInfo } from '@/api/baseData/baseData'
 
 export default {
   components: {
@@ -44,12 +46,9 @@ export default {
   },
   methods: {
     fetchData() {
-      getSeatInfo().then(res => {
-        this.seatMessage = res.data.items.seatMessage
-        getPeopleInfo().then(res => {
-          this.peopleMessage = res.data.items.peopleMessage
-          this.getFloorSeat()
-        })
+      api.getSeat({ storey: this.title }).then(res => {
+        console.log(res)
+        this.leftlist = res.item
       })
     },
     getFloorSeat() {
@@ -64,7 +63,6 @@ export default {
       console.log(this.tableData)
     }
   }
-
 }
 </script>
 <style lang="scss" type="text/scss" scoped>

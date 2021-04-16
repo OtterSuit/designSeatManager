@@ -18,7 +18,7 @@ const SeatSchema=new Schema({
     seat_message: {
         type: Object
     },
-    status: { //座位状态 0 空闲 1 使用中 2 已被预约 3暂停使用 
+    status: { // 座位状态 0 空闲 1 使用中 2 已被预约 3暂停使用 4暂时离开
         type:String
     },
     appointment_time: { //预约时间 非必须

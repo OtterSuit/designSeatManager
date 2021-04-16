@@ -49,7 +49,7 @@ mongoose.connect(db)
 		.catch(err => console.log(err))
 
 mongoose.set('useFindAndModify', false)
-
+mongoose.set('useUnifiedTopology', true)
 // passport初始化
 app.use(passport.initialize());
 

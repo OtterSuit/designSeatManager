@@ -14,7 +14,7 @@
       </template>
     </myfilters>
     <!-- 座位列表的展示区域 start -->
-    <div class="seat" style="overflow-y:scroll; height:70vh">
+    <div class="seat" style="overflow-y:scroll; height:65vh; margin-bottom:15px">
       <div style="text-align: left; color: #ccc; font-weight: 600">
         <el-card v-if="haveSeat === ''" shadow="hover">
           欢迎选座
@@ -31,6 +31,7 @@
             class="seat_select"
             :class="{
               active: item.status !== '0',
+              leaveNow: item.status === '4'
             }"
             @click="choosely(index, item)"
           >
@@ -57,15 +58,15 @@
       <el-button type="primary" @click="changeOK">换 座</el-button>
     </div>
     -->
-    <div style="text-align: center">
+    <div style="text-align: right;">
       <el-button v-if="haveSeat === ''" type="primary" :disabled="chooseClick.length==0?true:false" @click="pickSeat">选 座</el-button>
       <el-button v-else type="primary" @click="outSeat">退 座</el-button>
-    </div>
-    <div style="text-align: left">
+      <el-button v-if="isBack === false && haveSeat !== ''" type="danger" @click="leaveNow">暂 离</el-button>
+      <el-button v-if="isCome === true && haveSeat !== ''" type="success" @click="backSeat">回 座</el-button>
       <el-button type="primary" @click="appointmentOK">预 约</el-button>
     </div>
-    <div style="text-align: center">
-      <el-button v-if="isAdmin" type="primary" @click="outAllSeat">管理员一键退座</el-button>
+    <div style="text-align: right;margin-top: 15px; padding:0 10px">
+      <el-button v-if="isAdmin" type="primary" plain @click="outAllSeat">管理员一键退座</el-button>
     </div>
   </div>
 </template>
@@ -94,7 +95,16 @@ export default {
       chooseClick: [], // 选中的空座位
       haveSeat: '', // 是否有座位号
       isShow: true, // 在没有选中某一座位时禁止使用
-      isAdmin: false // 是否是管理员
+      isAdmin: false, // 是否是管理员
+      historyModel: { // 历史记录
+        user_college: '',
+        user_name: '',
+        user_school_id: '',
+        user_option_type: ''
+      },
+      isBack: false, // 回座标识
+      isCome: true,
+      a: ''
     }
   },
   watch: {
@@ -220,6 +230,10 @@ export default {
       console.log(name + school_id)
       api.pickSeat({ seat_id: this.chooseClick[0].seat_id, user_now: name, status: '1' }).then(res => {
         console.log(res)
+        this.$message({
+          message: '成功登记入座，请享受学习吧',
+          type: 'success'
+        })
         this.reload()
       })
       api.postUserPickSeat({ seat_id: this.chooseClick[0].seat_id, school_id: school_id }).then(res => {
@@ -228,6 +242,14 @@ export default {
           api.getUser({ school_id: school_id }).then(res => {
             console.log(res)
             this.haveSeat = res.item.seat_id // 告知用户他的座位号
+            this.historyModel.user_college = res.item.college
+            this.historyModel.user_name = name
+            this.historyModel.user_school_id = school_id
+            this.historyModel.user_option_type = '1'
+            console.log(this.historyModel)
+            api.historyPush(this.historyModel).then(res => {
+              console.log(res)
+            })
           })
         }
       })
@@ -249,11 +271,52 @@ export default {
         console.log(res)
         this.reload()
       })
-      api.poostOutAllSeat().then(res => {
+      api.postOutAllSeat().then(res => {
         console.log(res)
       })
     },
-
+    // 暂时离开
+    leaveNow() {
+      this.$confirm('你确认暂时离开座位？', '提示', {
+        confirmButtonText: '确定暂离',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.$message({
+          type: 'success',
+          message: '暂时离开!'
+        })
+        api.leaveSeatNow({ seat_id: this.haveSeat, status: '4' }).then(res => {
+          console.log(res)
+          this.reload()
+          // if (this.isBack !== false) {
+          //   setTimeout(() => {
+          //     const school_id = store.getters.schoolId
+          //     api.outSeat({ seat_id: this.haveSeat }).then(res => {
+          //       console.log(res)
+          //       console.log(this.isBack)
+          //       this.reload()
+          //     })
+          //     api.postOutSeat({ school_id: school_id }).then(res => {
+          //       console.log('暂离时间过长！你已被退座！')
+          //     })
+          //   }, 36000 * 2)
+          // }
+        })
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消暂离'
+        })
+      })
+    },
+    backSeat() { // 回座逻辑
+      console.log('我回来了')
+      api.leaveSeatNow({ seat_id: this.haveSeat, status: '1' }).then(res => {
+        console.log(res)
+        this.reload()
+      })
+    },
     // 换位按钮(没用了)
     changeOK() {
       if (this.chooseClick.length === 2) {
@@ -345,7 +408,7 @@ export default {
         color: #47a1ff;
         border: 1px solid #47a1ff;
       }
-      .calling {
+      .leaveNow {
         background: #ffeded !important;
         color: #ff9797;
         border: 1px solid #ff9797;

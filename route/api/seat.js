@@ -51,13 +51,24 @@ router.post("/register", (req,res) => {
         })
 })
 
+// 座位删除
+// $route  DELETE api/seat/remove
+// @desc   删除整个用户
+// @access Private
+router.delete("/remove", (req, res) => {
+    Seat.findOneAndRemove({ seat_id: req.body.seat_id })
+      .then(() => { //找到了该座位并删除
+        res.json({ del_success: true })
+      })
+  })
+
 
 //改变座位状态 思路 
 /**
  * 调用post接口 使用updateOne更新的方法 更新表修改对应座位状态 并且前端做限制
  */
 
-//座位状态修改
+//座位状态修改 暂时离开
 //$route POST api/seat/status
 //@desc 修改修改状态
 //@access public 
@@ -223,22 +234,35 @@ router.post("/outSeat", (req,res) => {
 //@desc 返回请求的json数据
 //@access public 
 router.post("/find",(req,res)=>{
-    if(req.body.storey === '' || req.body.storey == null) {
+    console.log(req.body.seat_id)
+    if(req.body.storey === '' || req.body.storey == undefined) {
         // 如果没有指定规定楼层 默认返回全部
         Seat.find()
         .then(item =>{
             res.json({
                 code:200,
                 msg:"查询全部楼层所有座位信息",
+                tip:"座位状态 0 空闲 1 使用中 2 已被预约 3暂停使用 4暂时离开",
                 item
             })
         })
-    }else {
+    }else if(req.body.storey !== '' && req.body.seat_id !== '' && req.body.seat_id !== undefined) {
+        Seat.findOne({seat_id: req.body.seat_id})
+        .then(item =>{
+            res.json({
+                code:200,
+                msg:"查询"+req.body.seat_id+"的信息",
+                tip:"座位状态 0 空闲 1 使用中 2 已被预约 3暂停使用 4暂时离开",
+                item
+            })
+        })
+    } else {
         Seat.find({"storey":req.body.storey})
         .then(item =>{
             res.json({
                 code:200,
                 msg:"查询"+req.body.storey+"楼层的信息",
+                tip:"座位状态 0 空闲 1 使用中 2 已被预约 3暂停使用 4暂时离开",
                 item
             })
         })
@@ -262,6 +286,7 @@ router.get("/allSeat",(req,res)=>{
     .then(result =>{
         res.json({
             code: 200,
+            tip:"座位状态 0 空闲 1 使用中 2 已被预约 3暂停使用 4暂时离开",
             result
         })
     })
@@ -277,6 +302,7 @@ router.get("/getStorey",(req,res)=>{
     .then(seats =>{
         res.json({
             code: 200,
+            tip:"座位状态 0 空闲 1 使用中 2 已被预约 3暂停使用 4暂时离开",
             seats
         })
     })

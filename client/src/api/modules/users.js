@@ -24,8 +24,8 @@ export default {
     return api({ url: 'api/users/pickSeat', params, method: 'post' })
   },
   // user全退
-  poostOutAllSeat(params) {
-    return api({ url: 'api/users/outALLSeat', params, method: 'post' })
+  postOutAllSeat(params) {
+    return api({ url: 'api/users/outAllSeat', params, method: 'post' })
   },
   // user个人退座
   postOutSeat(params) {

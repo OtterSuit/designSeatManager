@@ -11,10 +11,9 @@
     />
     <el-table :data="showData">
       <el-table-column type="index" width="100" />
-      <el-table-column label="学号" prop="peopleMessage.id" />
-      <el-table-column label="姓名" prop="peopleMessage.name" />
-      <el-table-column label="座位号" prop="seatMessage" :formatter="idFormat" />
-      <el-table-column label="就坐时间" prop="time" :formatter="seatTime" />
+      <el-table-column label="姓名" prop="user_now" />
+      <el-table-column label="座位号" prop="seat_id" />
+      <!--<el-table-column label="就坐时间" prop="time"/> -->
       <el-table-column
         label="状态"
       >
@@ -73,6 +72,7 @@
 
 <script>
 import myfilters from '@/components/myfilters'
+import api from '@/api'
 
 export default {
   components: {
@@ -100,13 +100,37 @@ export default {
     }
   },
   watch: {
+    title(newVal, oldVal) {
+      console.log(newVal + '=====' + oldVal)
+      this.showData.splice(0, this.showData.length)
+      // this.showData.length = 0 // 使用置length为0 的方法会出现bug 谨慎使用
+      api.getSeat({ storey: newVal }).then(res => {
+        // this.showData = res.item
+        for (let i = 0; i < res.item.length; i++) {
+          if (res.item[i].status !== '0') {
+            this.showData.push(res.item[i])
+            console.log(this.showData)
+          }
+        }
+      })
+    },
     tableData() {
       this.showData = this.tableData
     }
   },
   mounted() {
-    console.log(this.getTime())
-    this.showData = this.tableData
+    console.log(this.title)
+    this.showData.splice(0, this.showData.length)
+    // this.showData = this.tableData
+    api.getSeat({ storey: this.title }).then(res => {
+      // this.showData = res.item
+      for (let i = 0; i < res.item.length; i++) {
+        if (res.item[i].status !== '0') {
+          this.showData.push(res.item[i])
+          console.log(this.showData)
+        }
+      }
+    })
   },
   methods: {
     idFormat(row, index) {
@@ -164,25 +188,56 @@ export default {
         })
         .catch(_ => {})
     },
+    // 状态样式
     // 状态标签文字
     status(status) {
-      return status ? '暂时离开' : '正在学习'
+      if (status === '0') {
+        return '暂无使用'
+      } else if (status === '1') {
+        return '使用中'
+      } else if (status === '2') {
+        return '已被预约'
+      } else if (status === '3') {
+        return '暂停使用'
+      } else if (status === '4') {
+        return '暂时离开'
+      }
     },
     // 状态的icon
     statusIcon(status) {
-      return status ? 'el-icon-time' : 'el-icon-bell'
+      if (status === '0') {
+        return 'el-icon-success'
+      } else if (status === '1') {
+        return 'el-icon-loading'
+      } else if (status === '2') {
+        return 'el-icon-date'
+      } else if (status === '3') {
+        return 'el-icon-error'
+      } else if (status === '4') {
+        return 'el-icon-watch'
+      }
     },
     // 状态颜色
     statusColor(status) {
-      return status ? 'end-color' : 'success-color'
-    },
-    seatTime(row, index) {
-      return row.time || this.getTime()
-    },
-    getTime() {
-      const date = new Date()
-      return (date.getMonth() + 1) + '-' + date.getDate() + ' ' + date.getHours() + ':' + date.getMinutes()
+      if (status === '0') {
+        return 'success-color'
+      } else if (status === '1') {
+        return 'normal-color'
+      } else if (status === '2') {
+        return 'date'
+      } else if (status === '3') {
+        return 'error-color'
+      } else if (status === '4') {
+        return 'warning-color'
+      }
     }
+    // seatTime(row, index) {
+    //   return row.time || this.getTime()
+    // },
+    // getTime() {
+    //   const date = new Date()
+    //   return (date.getMonth() + 1) + '-' + date.getDate() + ' ' + date.getHours() + ':' + date.getMinutes()
+    // }
   }
 }
 </script>

@@ -26,5 +26,17 @@ export default {
   // 用户退座
   outSeat(params) {
     return api({ url: 'api/seat/outSeat', params, method: 'post' })
+  },
+  // 注册座位 基础base模块
+  registerSeat(params) {
+    return api({ url: 'api/seat/register', params, method: 'post' })
+  },
+  // 改变座位状态 暂时离开
+  leaveSeatNow(params) {
+    return api({ url: 'api/seat/status', params, method: 'post' })
+  },
+  // 删除座位
+  removeSeat(params) {
+    return api({ url: 'api/seat/remove', params, method: 'delete' })
   }
 }

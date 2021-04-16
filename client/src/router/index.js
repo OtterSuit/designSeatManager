@@ -69,7 +69,7 @@ export const constantRoutes = [
         path: 'floor',
         name: 'Floor',
         component: () => import('@/views/floor'),
-        meta: { title: '楼层详情', icon: 'iconchuanci' }
+        meta: { title: '楼层座位详情', icon: 'iconchuanci' }
       }
     ]
   },

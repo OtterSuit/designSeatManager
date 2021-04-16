@@ -200,10 +200,16 @@ export default {
       seatChoosed: '', // 用来浅拷贝
       total: 100,
       pageSize: 20,
-      peopleMessage: '',
-      seatMessage: '',
+      // peopleMessage: '',
+      // seatMessage: '',
       drawer: {
         floor: '一楼'
+      },
+      historyModel: { // 历史记录
+        user_college: '',
+        user_name: '',
+        user_school_id: '',
+        user_option_type: ''
       }
     }
   },
@@ -285,12 +291,19 @@ export default {
       })
       api.postUserPickSeat({ seat_id: this.seatChoosed, school_id: this.query.school_id }).then(res => {
         console.log(res)
-        // if (res) {
-        //   api.getUser({ school_id: this.query.school_id }).then(res => {
-        //     console.log(res)
-        //     this.haveSeat = res.item.seat_id // 告知用户他的座位号
-        //   })
-        // }
+        if (res) {
+          api.getUser({ school_id: this.query.school_id }).then(res => {
+            console.log(res)
+            this.historyModel.user_college = res.item.college
+            this.historyModel.user_name = res.item.name
+            this.historyModel.user_school_id = res.item.school_id
+            this.historyModel.user_option_type = '1'
+            console.log(this.historyModel)
+            api.historyPush(this.historyModel).then(res => {
+              console.log(res)
+            })
+          })
+        }
         this.reload()
       })
       // if (this.seatChoosed !== '') {

@@ -4,11 +4,11 @@
       <el-col :span="4">
         <div class="top box top1">
           <i class="iconfont icon-huishou top-icon" />
-          <div class="top-title">{{ top.first.college }}</div>
+          <div class="top-title">{{ top.first._id }}</div>
           <div class="top-date">过去7日</div>
           <count-to
             :start-val="0"
-            :end-val="top.first.registCount"
+            :end-val="top.first.num_tutorial"
             :duration="3000"
             :autoplay="true"
             class="top-num"
@@ -18,11 +18,11 @@
       <el-col :span="4">
         <div class="top box top2">
           <i class="iconfont icon-tubiao- top-icon" />
-          <div class="top-title">{{ top.second.college }}</div>
+          <div class="top-title">{{ top.second._id }}</div>
           <div class="top-date">过去7日</div>
           <count-to
             :start-val="0"
-            :end-val="top.second.registCount"
+            :end-val="top.second.num_tutorial"
             :duration="3000"
             :autoplay="true"
             class="top-num"
@@ -32,11 +32,11 @@
       <el-col :span="4">
         <div class="top box top3">
           <i class="iconfont icon-zhuangpei top-icon" />
-          <div class="top-title">{{ top.third.college }}</div>
+          <div class="top-title">{{ top.third._id }}</div>
           <div class="top-date">过去7日</div>
           <count-to
             :start-val="0"
-            :end-val="top.third.registCount"
+            :end-val="top.third.num_tutorial"
             :duration="3000"
             :autoplay="true"
             class="top-num"
@@ -46,11 +46,11 @@
       <el-col :span="4">
         <div class="top box top4">
           <i class="iconfont icon-fengbao top-icon" />
-          <div class="top-title">{{ top.forth.college }}</div>
+          <div class="top-title">{{ top.forth._id }}</div>
           <div class="top-date">过去7日</div>
           <count-to
             :start-val="0"
-            :end-val="top.forth.registCount"
+            :end-val="top.forth.num_tutorial"
             :duration="3000"
             :autoplay="true"
             class="top-num"
@@ -60,11 +60,11 @@
       <el-col :span="4">
         <div class="top box top5">
           <i class="iconfont icon-miejun top-icon" />
-          <div class="top-title">{{ top.fifth.college }}</div>
+          <div class="top-title">{{ top.fifth._id }}</div>
           <div class="top-date">过去7日</div>
           <count-to
             :start-val="0"
-            :end-val="top.fifth.registCount"
+            :end-val="top.fifth.num_tutorial"
             :duration="3000"
             :autoplay="true"
             class="top-num"
@@ -115,7 +115,7 @@
         <div class="bottom box" style="overflow-y: scroll;">
           <span class="title">学院申请人数统计</span>
           <el-table :data="tableData" style="width: 100%">
-            <el-table-column prop="college" label="学院" />
+            <el-table-column prop="_id" label="学院" />
             <el-table-column prop="thisWeek" label="本周人次" />
             <el-table-column prop="lastWeek" label="上周人次" width="120" />
             <el-table-column prop="increase" label="增长率" :formatter="increase" />
@@ -144,9 +144,10 @@
 import countTo from 'vue-count-to'
 import mPie from '@/components/echart/pie'
 import mLine from '@/components/echart/line'
-import { getDashboard } from '@/api/dashboard/dashboard'
-import quickSort from '@/utils/sort'
-import { registerInfo } from '@/api/registerInfo/registerInfo'
+import api from '@/api'
+// import { getDashboard } from '@/api/dashboard/dashboard'
+// import quickSort from '@/utils/sort'
+// import { registerInfo } from '@/api/registerInfo/registerInfo'
 export default {
   components: {
     countTo,
@@ -165,12 +166,12 @@ export default {
         4: 'fifth'
       },
       top: {
-        first: { registCount: 0 },
-        second: { registCount: 0 },
-        third: { registCount: 0 },
-        forth: { registCount: 0 },
-        fifth: { registCount: 0 },
-        sixth: { registCount: 0 }
+        first: { _id: 'asd', num_tutorial: 0 },
+        second: { num_tutorial: 0 },
+        third: { num_tutorial: 0 },
+        forth: { num_tutorial: 0 },
+        fifth: { num_tutorial: 0 },
+        sixth: { num_tutorial: 0 }
       },
       lineStyle: {
         height: '280px',
@@ -217,24 +218,57 @@ export default {
   },
   created() {
     console.log(this.$router)
-    getDashboard().then(res => {
+    const temp = {}
+    api.historySum().then(res => {
       console.log(res)
-      if (res.code === 20000) {
-        this.tableData = res.data.items.registCompare
-        this.seatRealtime = res.data.items.seatRealtime
-        this.seatSituation = res.data.items.seatSituation
-        const topData = quickSort(res.data.items.top)
-        for (let i = 0; i < 5; i++) {
-          this.top[this.topDict[i]] = topData[i]
-        }
-        console.log(this.floorCount[0].data)
-        // console.log(res.data.items.floorCount)
-        this.$set(this.floorCount[0], 'data', res.data.items.floorCount)
+      // 排序算法设计思路 首先对获得的res进行处理 找出 res下 num_tutorial由大到小的排序顺序
+      // 获得之后进行遍历 再添加给top进行渲染
+      const sorted_keys_array = Object.keys(res).sort((a, b) => {
+        return res[b].num_tutorial - res[a].num_tutorial
+      })
+      console.log(sorted_keys_array)
+      for (let i = 0; i < 5; i++) {
+        console.log(res[sorted_keys_array[i]])
+        this.top.first = res[sorted_keys_array[0]]
+        this.top.second = res[sorted_keys_array[1]]
+        this.top.third = res[sorted_keys_array[2]]
+        this.top.forth = res[sorted_keys_array[3]]
+        this.top.fifth = res[sorted_keys_array[4]]
       }
+      // Object.keys(res).sort().map(key => {
+      //   console.log(res[key])
+      //   temp[key] = res[key]
+      // })
+
+      // for (let i = 0; i <= res.length - 1; i++) {
+      //   console.log(res[i])
+      //   if(res[i]>res[i+1]){
+
+      //   }
+      // }
     })
-    registerInfo('111').then(res => {
-      console.log(res)
-    })
+    console.log(temp)
+    // api.historyFind().then(res => {
+    //   console.log(res)
+    // })
+    // getDashboard().then(res => {
+    //   console.log(res)
+    //   if (res.code === 20000) {
+    //     this.tableData = res.data.items.registCompare
+    //     this.seatRealtime = res.data.items.seatRealtime
+    //     this.seatSituation = res.data.items.seatSituation
+    //     const topData = quickSort(res.data.items.top)
+    //     for (let i = 0; i < 5; i++) {
+    //       this.top[this.topDict[i]] = topData[i]
+    //     }
+    //     console.log(this.floorCount[0].data)
+    //     // console.log(res.data.items.floorCount)
+    //     this.$set(this.floorCount[0], 'data', res.data.items.floorCount)
+    //   }
+    // })
+    // registerInfo('111').then(res => {
+    //   console.log(res)
+    // })
   },
   methods: {
     // 不良事件图形类型转换
