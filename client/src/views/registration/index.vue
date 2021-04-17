@@ -345,8 +345,14 @@ export default {
       this.isQuery = false
       api.getUser({ school_id: this.school_id }).then(res => {
         console.log(res)
-        this.query = res.item
-        this.isQuery = true
+        if (res.code === 200){
+          this.query = res.item
+          this.isQuery = true
+          this.$message({
+            message: '查询成功',
+            type: 'success'
+          })
+        }
       })
     }
   }

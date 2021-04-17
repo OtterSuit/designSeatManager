@@ -70,7 +70,7 @@
         @current-change="currentChange"
       />
     </div>
-    <el-dialog title="岗位变动信息" :visible.sync="show" width="800px">
+    <el-dialog :title="title" :visible.sync="show" width="800px">
       <div class="dialog-main">
         <el-form ref="form" :model="form" label-width="100px">
           <el-row>
@@ -95,7 +95,14 @@
           <el-row>
             <el-col :span="22">
               <el-form-item label="状态">
-                <el-input v-model="form.status" type="textarea" />
+                <!-- <el-input v-model="form.status" type="textarea" /> -->
+                 <el-select v-model="form.status" :disabled="title === '添加座位'?true:false">
+                  <el-option label="空闲" value="0" />
+                  <el-option label="使用中" value="1" />
+                  <el-option label="已被预约" value="2" />
+                  <el-option label="暂停使用" value="3" />
+                  <el-option label="暂时离开" value="4" />
+                </el-select>
               </el-form-item>
             </el-col>
           </el-row>
@@ -118,6 +125,7 @@ export default {
   components: {
     myfilters
   },
+  inject: ['reload'],
   data() {
     return {
       total: 100,
@@ -129,7 +137,8 @@ export default {
       tableData: [],
       table: [],
       form: {},
-      oldForm: null
+      oldForm: null,
+      title: ''
     }
   },
   created() {
@@ -202,6 +211,8 @@ export default {
       this.edit = false
       this.form = {}
       this.show = true
+      this.title = '添加座位'
+      this.form.status = '0'
     },
     addSubmit() {
       // addInfoChange().then(response => {
@@ -222,6 +233,11 @@ export default {
       this.form.appointment_time = ''
       api.registerSeat(this.form).then(res => {
         console.log(res)
+        this.$message({
+          message: '成功添加新座位',
+          type: 'success'
+        })
+        this.reload()
         this.oldTable.push(this.form)
         this.table.push(this.form)
         this.total += 1
@@ -298,7 +314,7 @@ export default {
     // 状态标签文字
     status(status) {
       if (status === '0') {
-        return '暂无使用'
+        return '空闲'
       } else if (status === '1') {
         return '使用中'
       } else if (status === '2') {

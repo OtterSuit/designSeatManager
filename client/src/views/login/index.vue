@@ -189,7 +189,7 @@ $light_gray:#eee;
   position: relative;
   min-height: 100%;
   width: 100%;
-  background-image: url("../../assets/images/bgimage.png");
+  background-image: url("../../assets/images/bgimage5.png");
   background-size: cover;
   overflow: hidden;
 

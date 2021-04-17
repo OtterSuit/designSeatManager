@@ -90,7 +90,7 @@ router.post("/login", (req,res) => {
     User.findOne({school_id})
         .then(user => {
             if(!user){
-                return res.json({school_id: "用户不存在！", code: 400})
+                return res.json({msg: "用户不存在！", code: 400})
             }
 
             // 密码匹配
@@ -158,7 +158,7 @@ router.post("/userQuery", (req,res) => {
     if(!school_id || school_id.length !== 10) {
         return res.json({
             code: 400,
-            message: '请输入正确的学号'
+            msg: '请输入正确的学号'
         });
     }
     console.log(school_id.length !== 10);
@@ -167,7 +167,7 @@ router.post("/userQuery", (req,res) => {
     User.findOne({school_id})
         .then(user => {
             if(!user){
-                return res.json({school_id: "用户不存在！", code: 400})
+                return res.json({msg: "用户不存在！", code: 400})
             }
             const newUser = {
                 id: user._id,

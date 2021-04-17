@@ -3,7 +3,7 @@
     <el-row :gutter="20">
       <el-col :span="4">
         <div class="top box top1">
-          <i class="iconfont icon-huishou top-icon" />
+          <!-- <i class="el-icon-school" /> -->
           <div class="top-title">{{ top.first._id }}</div>
           <div class="top-date">过去7日</div>
           <count-to
@@ -218,7 +218,6 @@ export default {
   },
   created() {
     console.log(this.$router)
-    const temp = {}
     api.historySum().then(res => {
       console.log(res)
       // 排序算法设计思路 首先对获得的res进行处理 找出 res下 num_tutorial由大到小的排序顺序
@@ -247,7 +246,7 @@ export default {
       //   }
       // }
     })
-    console.log(temp)
+    // 拿到全部历史记录
     // api.historyFind().then(res => {
     //   console.log(res)
     // })

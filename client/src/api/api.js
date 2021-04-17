@@ -100,7 +100,10 @@ axios.interceptors.request.use(
     //   return config
     // }
   },
-  error => Promise.reject(error)
+  error => {
+    Promise.reject(error)
+    store.dispatch('app/setLoading', false)
+  }
 )
 // 添加请求拦截器
 // axios.interceptors.request.use(
@@ -148,7 +151,10 @@ axios.interceptors.response.use(
     // }
     return response
   },
-  error => Promise.reject(error)
+  error => {
+    Promise.reject(error)
+    store.dispatch('app/setLoading', false)
+  }
 )
 export function api(data) {
   const { url, params, method } = data
