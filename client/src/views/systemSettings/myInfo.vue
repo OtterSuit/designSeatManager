@@ -25,6 +25,25 @@
               </el-upload>
             </el-col>
           </el-row>
+          <el-row>
+            <div
+              class="top"
+              :class="{
+              full: form.reputation > 90,
+              canUse: 90 <= form.reputation >= 60,
+              cantUse: form.reputation < 60
+              }">
+            <div style="margin:27px 0">
+                <count-to
+                  :start-val="0"
+                  :end-val="form.reputation"
+                  :duration="3000"
+                  :autoplay="true"
+                  class="top-num"
+                />
+               </div>
+              </div>
+          </el-row>
           <el-row v-for="item in row" :key="item.label" class="row">
             <el-col :span="5">
               <div class="label">{{ item.label }}</div>
@@ -66,8 +85,14 @@
 
 <script>
 // postArchives
-import { getUserArchives } from '@/api/people/archives'
+// import { getUserArchives } from '@/api/people/archives'
+import api from '@/api'
+import store from '@/store'
+import countTo from 'vue-count-to'
 export default {
+  components: {
+    countTo
+  },
   data() {
     return {
       row: [
@@ -77,23 +102,18 @@ export default {
           edit: false
         },
         {
-          label: '性别',
-          value: 'gender',
+          label: '学号',
+          value: 'school_id',
           edit: false
         },
         {
-          label: '政治面貌',
-          value: 'politics',
+          label: '学院',
+          value: 'college',
           edit: false
         },
         {
-          label: '电话号码',
-          value: 'phone',
-          edit: false
-        },
-        {
-          label: '民族',
-          value: 'nation',
+          label: '权限',
+          value: 'identity',
           edit: false
         },
         {
@@ -102,35 +122,15 @@ export default {
           edit: false
         },
         {
-          label: '身份证号',
-          value: 'idCard',
-          edit: false
-        },
-        {
-          label: '婚姻',
-          value: 'marriage',
-          edit: false
-        },
-        {
-          label: '爱好',
-          value: 'hobby',
-          edit: false
-        },
-        {
-          label: '特长',
-          value: 'speciality',
-          edit: false
-        },
-        {
-          label: '籍贯',
-          value: 'native',
-          edit: false
-        },
-        {
-          label: '现住地址',
-          value: 'address',
+          label: '座位使用',
+          value: 'seat_id',
           edit: false
         }
+        // {
+        //   label: '信誉分',
+        //   value: 'reputation',
+        //   edit: false
+        // }
       ],
       form: {}
     }
@@ -140,11 +140,18 @@ export default {
   },
   methods: {
     fetchData() {
-      getUserArchives().then(response => {
-        // console.log(response)
-        this.form = response.data.items.user
-        // this.form.state = '1'
+      const school_id = store.getters.schoolId
+      api.getUser({ school_id: school_id }).then(res => {
+        this.form = res.item
+        if (res.item.seat_id === '') {
+          this.form.seat_id = '暂无使用'
+        }
       })
+      // getUserArchives().then(response => {
+      //   // console.log(response)
+      //   this.form = response.data.items.user
+      //   // this.form.state = '1'
+      // })
     },
     // ok按钮
     editSubmit(item) {
@@ -179,6 +186,35 @@ i {
     line-height:24px;
     display: block;
     text-align: center;
+  }
+  .full {
+    background-image: linear-gradient(#63bbd0, #c7d2d4);
+  }
+  .canUse {
+    background-image: linear-gradient(#c6e6e8, #c7d2d4);
+  }
+  .cantUse {
+    background-image: linear-gradient(#c7d2d4, #eea2a4);
+  }
+  .top {
+  width:100px;
+  height:100px;
+  margin: 0 auto;
+  border:1px solid #c7d2d4;
+  text-align: center;
+  position: relative;
+  border-radius: 50%;
+  }
+  .top-num {
+    // position: absolute;
+    // top: 31%;
+    // left: 16%;
+    margin: auto 0;
+    text-align: center;
+    font-size: 40px;
+    height: 40px;
+    font-weight: 500;
+    color: #fbb957;
   }
   .editBox {
   width:59px;

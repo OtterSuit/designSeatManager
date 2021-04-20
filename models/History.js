@@ -13,21 +13,28 @@
  
  //create Schema 数据模型设计
  const HistorySchema=new Schema({
-     user_college:{
+     user_college: {
          type:String,
          required:true
      },
-     user_name:{
-         type:String,
-         required:true,
-     },
-     user_school_id:{ 
+     user_name: {
          type:String,
          required:true
      },
-     user_option_type:{ // 用户操作类型 入座 1 退座 2 预约 3
+     user_school_id: { 
          type:String,
-         required:true,
+         required:true
+     },
+     user_option_type: { // 用户操作类型 入座 1 退座 2 预约 3
+         type:String,
+         required:true
+     },
+     seat_storey: { // 申请的楼层
+        type:String,
+        required:true
+     },
+     seat_id: { // 申请的座位id
+        type:String,
      },
      option_time:{ // 用户操作时的时间
          type:Date,

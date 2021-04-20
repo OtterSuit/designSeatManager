@@ -21,13 +21,15 @@ router.get("/test",(req,res)=>{
 //@desc 
 //@access public 
 router.post("/push", (req,res) => {
-    // console.log(req.body)
+    console.log(req.body)
 
 	const newHistory = new History({
 		user_college:req.body.user_college,
 		user_name:req.body.user_name,
 		user_school_id:req.body.user_school_id,
 		user_option_type:req.body.user_option_type,
+        seat_storey:req.body.seat_storey,
+        seat_id:req.body.seat_id
 	})
 
 	newHistory .save()
@@ -67,9 +69,29 @@ router.post("/find", (req,res) => {
 // @desc 
 // @access public
 router.post("/sum", (req,res) => {
-	History.aggregate([{$group : {_id : "$user_college", num_tutorial : {$sum : 1}}}]).then(item =>{
-		// ,{$sort : {"num_tutorial":-1}}
-		res.json(item)
-	})
+    if (req.body.type === 'college'){
+        History.aggregate([{$group : {_id : "$user_college", num_tutorial : {$sum : 1}}}]).then(item =>{
+            // ,{$sort : {"num_tutorial":-1}}
+            res.json(item)
+        })
+    } else if (req.body.type === 'storey'){
+        History.aggregate([{$group : {_id : "$seat_storey", num_tutorial : {$sum : 1}}}]).sort({'seat_storey':-1}).then(item =>{
+            // ,{$sort : {"num_tutorial":-1}}
+            res.json(item)
+        })
+    }
 })
+
+// 删除历史记录
+// $route DELETE api/history/clear
+// @desc 
+// @access public
+router.delete("/clear", (req, res) => {
+    History.remove()
+      .then(() => { // 全部删除
+        res.json({ del_success: true })
+      })
+  })
+
+
 module.exports = router

@@ -79,7 +79,7 @@
           <span
             class="content"
             style="margin-left: 5px;font-size: 12px; color: #999"
-          >按日统计</span>
+          >按月统计</span>
           <i
             class="el-icon-s-data echartsIcon"
             :class="{ activeIcon: activeIcon === 'bar' }"
@@ -166,12 +166,12 @@ export default {
         4: 'fifth'
       },
       top: {
-        first: { _id: 'asd', num_tutorial: 0 },
-        second: { num_tutorial: 0 },
-        third: { num_tutorial: 0 },
-        forth: { num_tutorial: 0 },
-        fifth: { num_tutorial: 0 },
-        sixth: { num_tutorial: 0 }
+        first: { _id: 'XX学院', num_tutorial: 0 },
+        second: { _id: 'XX学院', num_tutorial: 0 },
+        third: { _id: 'XX学院', num_tutorial: 0 },
+        forth: { _id: 'XX学院', num_tutorial: 0 },
+        fifth: { _id: 'XX学院', num_tutorial: 0 },
+        sixth: { _id: 'XX学院', num_tutorial: 0 }
       },
       lineStyle: {
         height: '280px',
@@ -182,6 +182,7 @@ export default {
           name: '发生次数',
           type: 'line',
           data: [],
+          // 1,2,4,5,6
           smooth: true,
           areaStyle: {
             color: 'rgba(64, 158, 255,.4)'
@@ -218,16 +219,17 @@ export default {
   },
   created() {
     console.log(this.$router)
-    api.historySum().then(res => {
-      console.log(res)
+    // 学院学习人数统计 上面五个块
+    api.historySum({ type: 'college' }).then(res => {
+      // console.log(res)
       // 排序算法设计思路 首先对获得的res进行处理 找出 res下 num_tutorial由大到小的排序顺序
       // 获得之后进行遍历 再添加给top进行渲染
       const sorted_keys_array = Object.keys(res).sort((a, b) => {
         return res[b].num_tutorial - res[a].num_tutorial
       })
-      console.log(sorted_keys_array)
+      // console.log(sorted_keys_array)
       for (let i = 0; i < 5; i++) {
-        console.log(res[sorted_keys_array[i]])
+        // console.log(res[sorted_keys_array[i]])
         this.top.first = res[sorted_keys_array[0]]
         this.top.second = res[sorted_keys_array[1]]
         this.top.third = res[sorted_keys_array[2]]
@@ -246,6 +248,27 @@ export default {
       //   }
       // }
     })
+    // 楼层入座记录统计
+    api.historySum({ type: 'storey' }).then(res => {
+      console.log(res)
+      // this.$set(this.floorCount[0], 'data', res)
+      const tempData = []
+      for (let i = 0; i < res.length; i++) {
+        if (res[i]._id === '一楼') {
+          tempData[0] = res[i].num_tutorial
+        } else if (res[i]._id === '二楼') {
+          tempData[1] = res[i].num_tutorial
+        } else if (res[i]._id === '三楼') {
+          tempData[2] = res[i].num_tutorial
+        } else if (res[i]._id === '四楼') {
+          tempData[3] = res[i].num_tutorial
+        } else if (res[i]._id === '五楼') {
+          tempData[4] = res[i].num_tutorial
+        }
+      }
+      this.$set(this.floorCount[0], 'data', tempData)
+    })
+
     // 拿到全部历史记录
     // api.historyFind().then(res => {
     //   console.log(res)

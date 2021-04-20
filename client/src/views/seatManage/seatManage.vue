@@ -100,7 +100,9 @@ export default {
         user_college: '',
         user_name: '',
         user_school_id: '',
-        user_option_type: ''
+        user_option_type: '',
+        seat_storey: '',
+        seat_id: ''
       },
       isBack: false, // 回座标识
       isCome: true,
@@ -246,6 +248,8 @@ export default {
             this.historyModel.user_name = name
             this.historyModel.user_school_id = school_id
             this.historyModel.user_option_type = '1'
+            this.historyModel.seat_storey = this.chooseClick[0].storey
+            this.historyModel.seat_id = this.chooseClick[0].seat_id
             console.log(this.historyModel)
             api.historyPush(this.historyModel).then(res => {
               console.log(res)

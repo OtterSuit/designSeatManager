@@ -190,7 +190,7 @@ router.post("/outAllSeat", (req,res) => {
     //         item
     //     })
     // })
-    Seat.update(whereStr, updateStr, function(err, ress) {
+    Seat.updateMany(whereStr, updateStr, function(err, ress) {
         if (err) throw err;
         console.log("更新成功");
         const result = {}

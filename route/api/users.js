@@ -176,6 +176,8 @@ router.post("/userQuery", (req,res) => {
                 identity: user.identity,
                 college: user.college,
                 seat_id: user.seat_id || '',
+                reputation: user.reputation,
+                email: user.email
             }
             return res.json({
                 code: 200,
@@ -247,7 +249,7 @@ router.post("/outAllSeat", (req,res) => {
     //         item
     //     })
     // })
-    User.update(whereStr,updateStr, function(err, ress) {
+    User.updateMany(whereStr,updateStr, function(err, ress) {
         if (err) throw err;
         console.log("更新成功");
         const result = {}

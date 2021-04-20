@@ -189,6 +189,7 @@ export default {
     return {
       isQuery: false, // 是否查询
       itemNumSeat: '',
+      itemNumStorey: '', // 所选座位楼层
       drawerOn: false,
       chooseAfterValue: [],
       seatList: [],
@@ -209,7 +210,9 @@ export default {
         user_college: '',
         user_name: '',
         user_school_id: '',
-        user_option_type: ''
+        user_option_type: '',
+        seat_storey: '',
+        seat_id: ''
       }
     }
   },
@@ -279,6 +282,7 @@ export default {
       }
       this.seatChoosed = item.seat_id
       this.itemNumSeat = item.seat_id
+      this.itemNumStorey = item.storey
     },
     // 确认选座
     seatconfirm() {
@@ -298,6 +302,8 @@ export default {
             this.historyModel.user_name = res.item.name
             this.historyModel.user_school_id = res.item.school_id
             this.historyModel.user_option_type = '1'
+            this.historyModel.seat_storey = this.itemNumStorey
+            this.historyModel.seat_id = this.seatChoosed
             console.log(this.historyModel)
             api.historyPush(this.historyModel).then(res => {
               console.log(res)
@@ -345,7 +351,7 @@ export default {
       this.isQuery = false
       api.getUser({ school_id: this.school_id }).then(res => {
         console.log(res)
-        if (res.code === 200){
+        if (res.code === 200) {
           this.query = res.item
           this.isQuery = true
           this.$message({

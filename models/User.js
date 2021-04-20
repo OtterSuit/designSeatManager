@@ -36,6 +36,10 @@ const UserSchema=new Schema({
         type: String,
 		// type:Schema.Types.ObjectId, //mangoDB提供的方法，根据id拿到user
 		// ref:"seat" //和seat表关联
+	},
+	reputation: {
+		type: Number,
+		default: 100
 	}
 })
 
