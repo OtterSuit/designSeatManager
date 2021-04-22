@@ -14,6 +14,7 @@
           <el-row type="flex" justify="space-between">
             <el-col :span="6" class="userImgBox">
               <img src="@/assets/images/meili.png" class="userImg">
+              <!--
               <el-upload
                 class="upload"
                 action="https://jsonplaceholder.typicode.com/posts/"
@@ -23,6 +24,7 @@
                 <i class="iconfont icon-shangchuan uploadIcon" />
                 <div class="el-upload__text">更换头像</div>
               </el-upload>
+              -->
             </el-col>
           </el-row>
           <el-row>

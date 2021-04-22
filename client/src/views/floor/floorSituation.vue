@@ -96,7 +96,7 @@ export default {
   computed: {
     // 计算tableData有几条数据
     content() {
-      return '共' + this.tableData.length + '条数据'
+      return '共' + this.showData.length + '条数据'
     }
   },
   watch: {

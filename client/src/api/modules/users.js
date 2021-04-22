@@ -30,5 +30,9 @@ export default {
   // user个人退座
   postOutSeat(params) {
     return api({ url: 'api/users/outSeat', params, method: 'post' })
-  }
+  },
+  // 修改密码
+  modifyPwd(params) {
+        return api({ url: 'api/users/password', params, method: 'post' })
+      },
 }

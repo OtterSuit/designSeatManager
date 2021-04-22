@@ -258,4 +258,68 @@ router.post("/outAllSeat", (req,res) => {
         res.json(result)
     })
 })
+
+//  用户修改信息
+//  $route POST 
+//  @desc 
+//  @access Private
+router.post("/change", passport.authenticate("jwt", {session: false}), (req,res) => {
+
+            const newUser = {
+                name: req.body.name,
+                email: req.body.email,
+                college: req.body.college,
+            }
+    
+            User.findOneAndUpdate({ school_id: req.user.school_id }, { $set:newUser }, { new:true }).then(user => {
+                if (user) {
+                    res.json({
+                        code: 200,
+                        user
+                    })
+                } else {
+                    res.json({
+                        code: 400,
+                        msg: '修改失败,请重试！！'
+                    })
+                }
+            })
+        })
+    
+    //  用户修改密码
+    //  $route POST
+    //  @desc return current user
+    //  @access Private
+    router.post("/password", passport.authenticate("jwt", {session: false}), (req,res) => {
+    
+            const oldPassword = req.body.oldPassword
+            const newPassword = req.body.newPassword
+    
+            User.findOne({ school_id: req.user.school_id }).then(user => {
+                if (user) {
+                    // 密码匹配
+                    console.log(oldPassword, user.password);
+                    bcrypt.compare(oldPassword, user.password)
+                            .then(isMatch => {
+                                if (isMatch) {
+                                    bcrypt.genSalt(10, (err,salt) => {
+                                        bcrypt.hash(newPassword, salt, (err,hash) => {
+                                            //Store hash in your password DB
+                                            if(err) throw err;
+                                            
+                                            user.password = hash
+                                            user.save().then(user => {
+                                                res.json({
+                                                    code: 200,
+                                                    user
+                                                })
+                                            })
+                                        })
+                                    })
+                                }
+                            })
+                        }
+                    })
+                })
+    
 module.exports = router;

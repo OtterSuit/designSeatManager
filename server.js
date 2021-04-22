@@ -25,7 +25,8 @@ const profiles = require("./route/api/profiles")
 const seat_user = require("./route/api/seat_user")
 // history.js
 const history = require("./route/api/history")
-
+// reputation
+const reputation = require("./route/api/reputation")
 
 // 使用body-parser中间件
 app.use(bodyParser.urlencoded({extended: false}));
@@ -39,6 +40,7 @@ app.use("/api/seat", seat);
 app.use("/api/profiles", profiles)
 app.use("/api/seat_user", seat_user)
 app.use("/api/history",history)
+app.use("/api/reputation",reputation)
 
 //DB config
 const db = require("./config/keys.js").mongoURI;
