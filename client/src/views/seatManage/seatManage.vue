@@ -58,7 +58,66 @@
       <el-button type="primary" @click="changeOK">换 座</el-button>
     </div>
     -->
+<!-- 对话框 -->
+<el-dialog title="确认举报" :visible.sync="dialogFormVisible">
+  <div style="text-align:center;margin-top:20px">
+    在您举报前，请查阅举报须知    
+  <el-popover
+    placement="top-start"
+    title="举报须知"
+    width="500"
+    trigger="hover"
+    content="您将对一位存在不良占座行为的用户进行举报，您的举报将被记录，我们对用户占座行为予以扣除信誉分的惩罚。同时为了保护用户权益，我们也将对恶意举报的用户处以惩罚，因此请您再次确认该用户是否未设置暂离并且离开超过半个小时！以免发生不必要的纠纷。如有疑问请联系管理员">
+  <el-button slot="reference">举报须知</el-button>
+  </el-popover>  
+  </div>
+  <el-form :model="form">
+  <el-row>
+  <el-col :span="12">
+   <el-form-item label="被举报人" label-width="120px">
+      <!--<el-input v-model="form.name" autocomplete="off"></el-input>-->
+      {{ form.name }}
+    </el-form-item>
+  </el-col>
+  <el-col :span="12">
+  <el-form-item label="被举报人当前信誉分" label-width="180px">
+      {{ form.reputation }}
+    </el-form-item>
+  </el-col>
+  </el-row>
+  <el-row>
+  <el-col :span="12">
+  <el-form-item label="座位号" label-width="120px">
+      {{ form.seat_id }}
+    </el-form-item>
+  </el-col>
+    <el-col :span="12">
+  <el-form-item label="当前时间" label-width="110px">
+      {{ form.nowTime }}
+    </el-form-item>
+  </el-col>
+  </el-row>
+  <el-row>
+    <el-col :span="12">
+    <el-form-item label="举报理由" label-width="120px">
+      <el-select v-model="form.informant" placeholder="请选择举报理由">
+        <el-option label="长时间没人（超过半个小时）并未设置暂离" value="长时间没人（超过半个小时）并未设置暂离"></el-option>
+        <el-option label="在自习室吃东西，乱丢垃圾" value="在自习室吃东西，乱丢垃圾"></el-option>
+        <el-option label="在自习室外放音乐" value="在自习室外放音乐"></el-option>
+        <el-option label="其他" value="其他"></el-option>
+      </el-select>
+    </el-form-item>
+    </el-col>
+  </el-row>  
+  </el-form>
+  <div slot="footer" class="dialog-footer">
+    <el-button @click="dialogFormVisible = false">取 消</el-button>
+    <el-button type="primary" @click="reputationComfirm" :disabled="this.form.informant === ''">确 定</el-button>
+  </div>
+</el-dialog>
+<!--对话框end-->
     <div style="text-align: right;">
+      <el-button type="danger" :disabled="chooseClick.length==0?true:false" @click="reputation">举报不良行为</el-button>
       <el-button v-if="haveSeat === ''" type="primary" :disabled="chooseClick.length==0?true:false" @click="pickSeat">选 座</el-button>
       <el-button v-else type="primary" @click="outSeat">退 座</el-button>
       <el-button v-if="isBack === false && haveSeat !== ''" type="danger" @click="leaveNow">暂 离</el-button>
@@ -106,7 +165,15 @@ export default {
       },
       isBack: false, // 回座标识
       isCome: true,
-      a: ''
+      form: {
+        name: '',
+        reputation: 100 ,
+        seat_id: '',
+        nowTime: '',
+        informant: '',
+        school_id:''
+      },
+      dialogFormVisible: false //对话框默认false
     }
   },
   watch: {
@@ -157,7 +224,7 @@ export default {
     },
     // 选择对应的座位号
     choosely(n, item) {
-      // console.log(n,item)
+      // console.log(n, item)
       this.chooseClick.push(item)
       if (this.chooseClick.indexOf(n) !== -1) {
         return
@@ -227,36 +294,43 @@ export default {
     },
     // 落座
     pickSeat() {
-      const name = store.getters.name // 从数据仓库拿信息
-      const school_id = store.getters.schoolId
-      console.log(name + school_id)
-      api.pickSeat({ seat_id: this.chooseClick[0].seat_id, user_now: name, status: '1' }).then(res => {
-        console.log(res)
-        this.$message({
-          message: '成功登记入座，请享受学习吧',
-          type: 'success'
-        })
-        this.reload()
-      })
-      api.postUserPickSeat({ seat_id: this.chooseClick[0].seat_id, school_id: school_id }).then(res => {
-        console.log(res)
-        if (res) {
-          api.getUser({ school_id: school_id }).then(res => {
-            console.log(res)
-            this.haveSeat = res.item.seat_id // 告知用户他的座位号
-            this.historyModel.user_college = res.item.college
-            this.historyModel.user_name = name
-            this.historyModel.user_school_id = school_id
-            this.historyModel.user_option_type = '1'
-            this.historyModel.seat_storey = this.chooseClick[0].storey
-            this.historyModel.seat_id = this.chooseClick[0].seat_id
-            console.log(this.historyModel)
-            api.historyPush(this.historyModel).then(res => {
-              console.log(res)
-            })
+      if (this.chooseClick[0].user_now === '') {
+        const name = store.getters.name // 从数据仓库拿信息
+        const school_id = store.getters.schoolId
+        console.log(name + school_id)
+        api.pickSeat({ seat_id: this.chooseClick[0].seat_id, user_now: name, status: '1' }).then(res => {
+          console.log(res)
+          this.$message({
+            message: '成功登记入座，请享受学习吧',
+            type: 'success'
           })
-        }
-      })
+          this.reload()
+        })
+        api.postUserPickSeat({ seat_id: this.chooseClick[0].seat_id, school_id: school_id }).then(res => {
+          console.log(res)
+          if (res) {
+            api.getUser({ school_id: school_id }).then(res => {
+              console.log(res)
+              this.haveSeat = res.item.seat_id // 告知用户他的座位号
+              this.historyModel.user_college = res.item.college
+              this.historyModel.user_name = name
+              this.historyModel.user_school_id = school_id
+              this.historyModel.user_option_type = '1'
+              this.historyModel.seat_storey = this.chooseClick[0].storey
+              this.historyModel.seat_id = this.chooseClick[0].seat_id
+              console.log(this.historyModel)
+              api.historyPush(this.historyModel).then(res => {
+                console.log(res)
+              })
+            })
+          }
+        })
+      } else {
+        this.$message({
+          message: '对不起！该座位已经有同学在学习！请选择空座位',
+          type: 'warning'
+        })
+      }
     },
     // 用户退座
     outSeat() {
@@ -319,6 +393,74 @@ export default {
       api.leaveSeatNow({ seat_id: this.haveSeat, status: '1' }).then(res => {
         console.log(res)
         this.reload()
+      })
+    },
+    reputation() { // 举报逻辑
+    let be_informant_reputation = 0
+    let be_informant_id = ''
+    const nowTime = new Date()
+    const year = nowTime.getFullYear()
+    const month = nowTime.getMonth() + 1
+    const day = nowTime.getDate()
+    const hour = nowTime.getHours()
+    const minutes = nowTime.getMinutes()
+    const seconds = nowTime.getSeconds()
+      if (this.chooseClick[0].user_now === '') {
+        this.$message({
+          message: '对不起！不能够举报空座位哦！',
+          type: 'warning'
+        })
+      } else {
+        this.dialogFormVisible = true
+        api.userQueryForName({ name: this.chooseClick[0].user_now }).then(res => {
+          this.form.name = res.item.name
+          this.form.reputation = res.item.reputation
+          this.form.seat_id = res.item.seat_id
+          this.form.nowTime = year + '-' + month + '-' + day + '-' + hour + ':' + minutes + ':' + seconds
+          this.form.school_id = res.item.school_id
+          be_informant_id =  res.item.school_id
+          be_informant_reputation = res.item.reputation
+        })
+      }
+    },
+    //确认举报
+     reputationComfirm() {
+      const mine = store.getters.name
+      const mine_school_id = store.getters.schoolId
+      console.log("确认举报 并且 被举报用户扣分并且遭到退座")
+      console.log(mine)
+      console.log(mine_school_id)
+      console.log(this.form.name)
+      console.log(this.form.school_id)
+      console.log(this.form.seat_id)
+      console.log(this.form.informant)
+      console.log(this.form.reputation - 5)
+      
+      api.informant({
+        informant: mine,
+        informant_school_id: mine_school_id,
+        be_informant: this.form.name,
+        be_informant_shcool_id: this.form.school_id,
+        seat_id: this.form.seat_id,
+        remark: this.form.informant
+      }).then(res => {
+        console.log(res)
+        api.reputationChange({ school_id: this.form.school_id ,reputation: this.form.reputation - 5 }).then(res => {
+          console.log(res)
+          this.$message({
+            message: '举报成功，感谢您为创建良好学习环境做出的努力',
+            type: 'success'
+          })
+          this.dialogFormVisible = false
+        })
+        // 强制被举报用户退座
+        api.outSeat({ seat_id: this.form.seat_id }).then(res => {
+          console.log(res)
+         this.reload()
+        })
+        api.postOutSeat({ school_id: this.form.school_id }).then(res => {
+          console.log(res)
+        })
       })
     },
     // 换位按钮(没用了)

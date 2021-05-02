@@ -14,7 +14,7 @@ router.get("/test",(req,res)=>{
 	res.json({msg:"用户举报历史记录"})
 })
 
-// $route GET api/reputation/informant
+// $route POST api/reputation/informant
 // @desc 举报接口
 // @access public 看是否为公开接口还是私有 
 router.post("/informant", (req,res) => {
@@ -35,4 +35,18 @@ router.post("/informant", (req,res) => {
         
 })
 
+// $route POST api/reputation/find
+// @desc 查看举报记录
+// @access public 看是否为公开接口还是私有 
+router.post("/find", (req,res) => {
+        Reputation.find()
+        .then(item =>{
+            res.json({
+                code:200,
+                msg:"查询全部举报信息所有历史信息",
+                item
+            })
+        })
+
+})
 module.exports = router

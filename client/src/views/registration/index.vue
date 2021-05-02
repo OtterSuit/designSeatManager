@@ -119,8 +119,8 @@
             </el-form-item>
           </el-col>
           <el-col :span="18">
-            <el-form-item label="备注:">
-              {{ query.remark }}
+            <el-form-item label="信誉分:">
+              {{ query.reputation }}
             </el-form-item>
           </el-col>
         </el-row>

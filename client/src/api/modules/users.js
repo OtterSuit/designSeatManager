@@ -33,6 +33,14 @@ export default {
   },
   // 修改密码
   modifyPwd(params) {
-        return api({ url: 'api/users/password', params, method: 'post' })
-      },
+    return api({ url: 'api/users/password', params, method: 'post' })
+  },
+  // 按名字查
+  userQueryForName(params) {
+    return api({ url: 'api/users/userQueryForName', params, method: 'post' })
+  },
+  // 信誉分扣除
+  reputationChange(params) {
+    return api({ url: 'api/users/reputationChange', params, method: 'post' })
+  }
 }

@@ -149,7 +149,7 @@ router.get("/allUser",(req,res)=>{
 
 
 //$route POST api/users/userQuery
-//@desc 返回token jwt passport
+//@desc 按学号查
 //@access public 
 
 router.post("/userQuery", (req,res) => {
@@ -185,6 +185,45 @@ router.post("/userQuery", (req,res) => {
             })
         })
 })
+
+//$route POST api/users/userQuery
+//@desc 按名字查
+//@access public 
+
+router.post("/userQueryForName", (req,res) => {
+
+    const { name } = req.body
+    if(!name) {
+        return res.json({
+            code: 400,
+            msg: '请输入正确的姓名'
+        });
+    }
+    console.log(name.length !== 10);
+    
+    // 查询数据库
+    User.findOne({name})
+        .then(user => {
+            if(!user){
+                return res.json({msg: "用户不存在！", code: 400})
+            }
+            const newUser = {
+                id: user._id,
+                school_id: user.school_id,
+                name: user.name,
+                identity: user.identity,
+                college: user.college,
+                seat_id: user.seat_id || '',
+                reputation: user.reputation,
+                email: user.email
+            }
+            return res.json({
+                code: 200,
+                item: newUser
+            })
+        })
+})
+
 
 
 //$route POST api/users/pickSeat
@@ -321,5 +360,26 @@ router.post("/change", passport.authenticate("jwt", {session: false}), (req,
                         }
                     })
                 })
-    
+
+//$route POST api/users/reputationChange
+//@desc 用户信誉分遭到扣除
+//@access public 
+router.post("/reputationChange", (req,res) => {
+    const userReputationFileFields = {}
+    if(req.body.school_id!=='') 
+    {
+        userReputationFileFields.reputation = req.body.reputation // 获得前端给的值 
+    }
+    console.log(userReputationFileFields)
+    const whereStr = {school_id: req.body.school_id};  // 查询条件
+    const updateStr = userReputationFileFields
+    User.updateOne(whereStr, updateStr, function(err, ress) {
+        if (err) throw err;
+        console.log("更新成功");
+        const result = {}
+        result.code = 200
+        result.msg = "用户被扣除信誉分"
+        res.json(result)
+    })
+})
 module.exports = router;

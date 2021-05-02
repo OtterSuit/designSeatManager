@@ -101,6 +101,19 @@ export const constantRoutes = [
     ]
   },
   {
+    path: '/reputation',
+    component: Layout,
+    redirect: '/reputation/rereputationport',
+    children: [
+      {
+        path: 'reputation',
+        name: 'Reputation',
+        component: () => import('@/views/reputation'),
+        meta: { title: '举报记录', icon: 'el-icon-s-data' }
+      }
+    ]
+  },
+  {
     path: '/systemSettings',
     component: Layout,
     redirect: '/systemSettings/myInfo',
