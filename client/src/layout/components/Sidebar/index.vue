@@ -3,7 +3,7 @@
     <div class="company">
       <div class="logo_txt">
         <img class="pic_logo" src="@/assets/images/logo-icon.png" alt="logo">
-        <span class="logo_title">座位管理<span style="margin-left: 5px">系统</span></span>
+        <span class="logo_title" v-if="!isCollapse">座位管理<span style="margin-left: 5px">系统</span></span>
       </div>
     </div>
     <logo v-if="showLogo" :collapse="isCollapse" />
@@ -97,7 +97,7 @@ export default {
 }
 .logo_title {
   font-size: 24px;
-  line-height: 45px;
+  // line-height: 45px;
   font-weight: 700;
   vertical-align: sub;
 }

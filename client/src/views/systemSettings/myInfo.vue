@@ -32,7 +32,7 @@
               class="top"
               :class="{
               full: form.reputation > 90,
-              canUse: 90 <= form.reputation >= 60,
+              canUse: form.reputation <= 90 && form.reputation >60,
               cantUse: form.reputation < 60
               }">
             <div style="margin:27px 0">
@@ -42,7 +42,7 @@
                   :duration="3000"
                   :autoplay="true"
                   class="top-num"
-                />
+                /><span style="font-weight:600">分</span>
                </div>
               </div>
           </el-row>

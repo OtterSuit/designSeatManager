@@ -15,8 +15,8 @@
         :data="tableData"
         style="width: 100%;"
       >
-        <el-table-column label="学院" prop="college" />
-        <el-table-column label="申请总人数" prop="registCount" />
+        <el-table-column label="学院" prop="_id" />
+        <el-table-column label="申请总人数" prop="num_tutorial" sortable />
         <el-table-column label="备注" :formatter="remarkFormat" />
       </el-table>
     </div>
@@ -28,7 +28,8 @@
 import myfilters from '@/components/myfilters'
 import htmlToPdf from '@/vendor/Export2Pdf'
 import htmlToHtml from '@/vendor/Export2Html'
-import { getDashboard } from '@/api/dashboard/dashboard'
+import api from '@/api'
+// import { getDashboard } from '@/api/dashboard/dashboard'
 
 export default {
   components: {
@@ -47,9 +48,8 @@ export default {
     }
   },
   created() {
-    getDashboard().then(res => {
-      console.log(res)
-      this.tableData = res.data.items.top
+    api.historySum({ type: 'college' }).then(res => {
+        this.tableData = res
     })
   },
   methods: {
@@ -63,7 +63,7 @@ export default {
           ['学院申请统计', '', '']
         ]
         const header = ['学院', '申请总人数', '备注']
-        const filterVal = ['college', 'registCount', 'remark']
+        const filterVal = ['_id', 'num_tutorial', 'remark']
         const data = this.formatJson(filterVal)
         const merges = ['A1:C1']
         excel.export_json_to_excel({

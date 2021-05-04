@@ -38,6 +38,10 @@
         label="学院"
       />
       <el-table-column
+        prop="reputation"
+        label="信誉分"
+      />
+      <el-table-column
         prop="remark"
         label="备注"
       />

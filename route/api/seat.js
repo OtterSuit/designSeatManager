@@ -432,4 +432,22 @@ router.get("/using", (req,res) => {
     })
 })
 
+// 聚合$sum计算
+// $route POST api/seat/sum
+// @desc 
+// @access public
+router.post("/sum", (req,res) => {
+    // if (req.body.type === 'now'){
+        Seat.aggregate([{$group : {_id : "$status", num_tutorial : {$sum : 1}}}]).then(item =>{
+            // ,{$sort : {"num_tutorial":-1}}
+            res.json(item)
+        })
+    // } else if (req.body.type === 'bad'){
+    //     History.aggregate([{$group : {_id : "$seat_storey", num_tutorial : {$sum : 1}}}]).sort({'seat_storey':-1}).then(item =>{
+    //         // ,{$sort : {"num_tutorial":-1}}
+    //         res.json(item)
+    //     })
+    // }
+})
+
 module.exports = router //供出router

@@ -53,11 +53,28 @@ router.post("/find", (req,res) => {
             })
         })
     } else if (req.body.college !== '') {
-        Seat.find({user_college: req.body.college})
+        History.find({user_college: req.body.college})
         .then(item =>{
             res.json({
                 code:200,
                 msg:"查询"+req.body.college+"的信息",
+                item
+            })
+        })
+    }
+})
+
+// 历史记录查询个人向
+// $route POST api/history/findForOne
+// @desc 
+// @access public
+router.post("/findForOne", (req,res) => {
+    if (req.body.user_school_id !== '') {
+        History.find({user_school_id: req.body.user_school_id})
+        .then(item =>{
+            res.json({
+                code:200,
+                msg:"查询"+req.body.user_school_id+"的信息",
                 item
             })
         })

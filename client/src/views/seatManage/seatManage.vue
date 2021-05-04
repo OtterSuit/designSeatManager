@@ -31,7 +31,8 @@
             class="seat_select"
             :class="{
               active: item.status !== '0',
-              leaveNow: item.status === '4'
+              leaveNow: item.status === '4',
+              bad: item.status === '3'
             }"
             @click="choosely(index, item)"
           >
@@ -224,7 +225,7 @@ export default {
     },
     // 选择对应的座位号
     choosely(n, item) {
-      // console.log(n, item)
+      console.log(n, item)
       this.chooseClick.push(item)
       if (this.chooseClick.indexOf(n) !== -1) {
         return
@@ -294,7 +295,7 @@ export default {
     },
     // 落座
     pickSeat() {
-      if (this.chooseClick[0].user_now === '') {
+      if (this.chooseClick[0].user_now === '' && this.chooseClick[0].status !== '3') {
         const name = store.getters.name // 从数据仓库拿信息
         const school_id = store.getters.schoolId
         console.log(name + school_id)
@@ -324,6 +325,11 @@ export default {
               })
             })
           }
+        })
+      } else if (this.chooseClick[0].user_now === '' && this.chooseClick[0].status === '3') {
+          this.$message({
+          message: '对不起！不能坐在坏座位上哦~请等候维修完毕',
+          type: 'warning'
         })
       } else {
         this.$message({
@@ -407,7 +413,7 @@ export default {
     const seconds = nowTime.getSeconds()
       if (this.chooseClick[0].user_now === '') {
         this.$message({
-          message: '对不起！不能够举报空座位哦！',
+          message: '对不起！不能够举报空座位/损坏的座位哦！',
           type: 'warning'
         })
       } else {
@@ -558,6 +564,11 @@ export default {
         background: #ffeded !important;
         color: #ff9797;
         border: 1px solid #ff9797;
+      }
+      .bad {
+        background: #ffeded !important;
+        color: #E6A23C;
+        border: 1px solid #E6A23C;
       }
     }
   }

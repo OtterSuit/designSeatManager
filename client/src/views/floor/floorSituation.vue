@@ -26,7 +26,7 @@
         </template>
       </el-table-column>
       <!-- 操作 -->
-      <el-table-column>
+      <el-table-column v-if="isAdmin">
         <template slot-scope="scope">
           <el-dropdown trigger="click" class="dropdown" @command="handleCommand">
             <span class="el-dropdown-link">
@@ -38,6 +38,15 @@
               </el-button>
             </span>
             <el-dropdown-menu slot="dropdown">
+            <!-- 先确定用户是不是管理员 如果是 可以有权利直接扣信誉分并且使其退座 -->
+            <el-dropdown-item
+                :command="{
+                  index: scope.$index,
+                  row: scope.row,
+                  action: 'seatLeave'
+                }"
+              >强制退座</el-dropdown-item>
+            <!--
               <el-dropdown-item
                 v-if="scope.row.status!=='1'"
                 :command="{
@@ -54,14 +63,7 @@
                   action: 'comeback'
                 }"
               >继续使用</el-dropdown-item>
-              <el-dropdown-item
-                :disabled="scope.row.status=='3'"
-                :command="{
-                  index: scope.$index,
-                  row: scope.row,
-                  action: 'endSeat'
-                }"
-              >注销座位</el-dropdown-item>
+              -->
             </el-dropdown-menu>
           </el-dropdown>
         </template>
@@ -73,11 +75,13 @@
 <script>
 import myfilters from '@/components/myfilters'
 import api from '@/api'
+import store from '@/store'
 
 export default {
   components: {
     myfilters
   },
+  inject: ['reload'],
   props: {
     title: {
       type: String,
@@ -90,7 +94,8 @@ export default {
   },
   data() {
     return {
-      showData: []
+      showData: [],
+      isAdmin: false // 是不是管理员 默认不是
     }
   },
   computed: {
@@ -131,6 +136,12 @@ export default {
         }
       }
     })
+    const school_id = store.getters.schoolId
+    api.getUser({ school_id: school_id }).then(res => {
+      if (res.item.identity === 'admin') {
+        this.isAdmin = true
+      }
+    })
   },
   methods: {
     idFormat(row, index) {
@@ -168,17 +179,31 @@ export default {
     handleCommand({ index, row, action }) {
       this[action](index, row)
     },
-    tempLeave(index, row) {
-      console.log(row.status)
-      this.$confirm('暂时离开？')
-        .then(_ => {
-          this.$set(row, 'status', '1')
-        })
-        .catch(_ => {})
+    seatLeave(index, row){
+      console.log(row)
+      api.userQueryForName({ name:row.user_now }).then(res=>{
+      // 强制用户退座
+      api.outSeat({ seat_id: row.seat_id }).then(res => {
+        console.log(res)
+        this.reload()
+      })
+      api.postOutSeat({ school_id: res.item.school_id }).then(res => {
+        console.log(res)
+      })
+    })
+     
     },
-    comeback(index, row) {
-      this.$set(row, 'status', 0)
-    },
+    // tempLeave(index, row) {
+    //   console.log(row.status)
+    //   this.$confirm('暂时离开？')
+    //     .then(_ => {
+    //       this.$set(row, 'status', '1')
+    //     })
+    //     .catch(_ => {})
+    // },
+    // comeback(index, row) {
+    //   this.$set(row, 'status', 0)
+    // },
     endSeat(index, row) {
       // 浅拷贝 让row指向当前行地址为了之后对话框准备
       this.$confirm('确定离开？')

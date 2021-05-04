@@ -35,19 +35,6 @@ export const constantRoutes = [
     }]
   },
   {
-    path: '/base',
-    component: Layout,
-    redirect: '/base/base',
-    children: [
-      {
-        path: 'base',
-        name: 'Base',
-        component: () => import('@/views/base/index'),
-        meta: { title: '基础数据', icon: 'iconpeiyao', identity: 'admin' }
-      }
-    ]
-  },
-  {
     path: '/registration',
     component: Layout,
     redirect: '/registration/registration',
@@ -69,7 +56,7 @@ export const constantRoutes = [
         path: 'floor',
         name: 'Floor',
         component: () => import('@/views/floor'),
-        meta: { title: '楼层座位详情', icon: 'iconchuanci' }
+        meta: { title: '楼层座位详情', icon: 'el-icon-message-solid' }
       }
     ]
   },
@@ -96,7 +83,7 @@ export const constantRoutes = [
         path: 'report',
         name: 'Report',
         component: () => import('@/views/report'),
-        meta: { title: '统计报表', icon: 'el-icon-s-data', identity: 'admin' }
+        meta: { title: '统计报表', icon: 'el-icon-s-marketing', identity: 'admin' }
       }
     ]
   },
@@ -110,6 +97,19 @@ export const constantRoutes = [
         name: 'Reputation',
         component: () => import('@/views/reputation'),
         meta: { title: '举报记录', icon: 'el-icon-s-data' }
+      }
+    ]
+  },
+  {
+    path: '/base',
+    component: Layout,
+    redirect: '/base/base',
+    children: [
+      {
+        path: 'base',
+        name: 'Base',
+        component: () => import('@/views/base/index'),
+        meta: { title: '基础数据', icon: 'el-icon-s-tools', identity: 'admin' }
       }
     ]
   },

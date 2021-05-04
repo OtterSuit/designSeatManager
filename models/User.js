@@ -37,10 +37,13 @@ const UserSchema=new Schema({
 		// type:Schema.Types.ObjectId, //mangoDB提供的方法，根据id拿到user
 		// ref:"seat" //和seat表关联
 	},
-	reputation: {
+	reputation: { // 信誉分
 		type: Number,
 		default: 100
-	}
+	},
+	// mark: { 小纸条
+	// 	type: Array,
+	// }
 })
 
 module.exports = User = mongoose.model("user",UserSchema)

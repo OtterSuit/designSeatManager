@@ -31,6 +31,8 @@ export default {
   registerSeat(params) {
     return api({ url: 'api/seat/register', params, method: 'post' })
   },
+  
+  // base 改变作为状态为损坏 
   // 改变座位状态 暂时离开
   leaveSeatNow(params) {
     return api({ url: 'api/seat/status', params, method: 'post' })
@@ -38,5 +40,9 @@ export default {
   // 删除座位
   removeSeat(params) {
     return api({ url: 'api/seat/remove', params, method: 'delete' })
+  },
+  // 聚合计算
+  sumSeat(params) {
+    return api({ url: 'api/seat/sum', params, method: 'post' })
   }
 }

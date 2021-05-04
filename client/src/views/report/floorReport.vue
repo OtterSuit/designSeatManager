@@ -16,10 +16,9 @@
         :data="tableData"
         style="width: 100%;"
       >
-        <el-table-column label="日期" prop="date" />
-        <el-table-column label="楼层" prop="floor" />
-        <el-table-column label="总人数" prop="totalCount" />
-        <el-table-column label="备注" prop="remark" />
+        <el-table-column label="楼层" prop="_id" />
+        <el-table-column label="总人数" prop="num_tutorial" sortable />
+        <el-table-column label="备注" :formatter="remarkFormat" />
       </el-table>
     </div>
   </div>
@@ -30,6 +29,7 @@
 import myfilters from '@/components/myfilters'
 import htmlToPdf from '@/vendor/Export2Pdf'
 import htmlToHtml from '@/vendor/Export2Html'
+import api from '@/api'
 
 export default {
   components: {
@@ -38,39 +38,13 @@ export default {
   data() {
     return {
       title: '楼层申请统计',
-      tableData: [
-        {
-          date: '2020/11/7',
-          floor: '一楼',
-          totalCount: 237,
-          remark: '无'
-        },
-        {
-          date: '2020/11/7',
-          floor: '二楼',
-          totalCount: 237,
-          remark: '无'
-        },
-        {
-          date: '2020/11/7',
-          floor: '三楼',
-          totalCount: 237,
-          remark: '无'
-        },
-        {
-          date: '2020/11/7',
-          floor: '四楼',
-          totalCount: 223,
-          remark: '无'
-        },
-        {
-          date: '2020/11/7',
-          floor: '五楼',
-          totalCount: 278,
-          remark: '无'
-        }
-      ]
+      tableData: []
     }
+  },
+  created() {
+    api.historySum({ type: 'storey' }).then(res => {
+        this.tableData = res
+    })
   },
   computed: {
     // 计算tableData有几条数据
@@ -79,6 +53,9 @@ export default {
     }
   },
   methods: {
+    remarkFormat(row, index) {
+      return row.remark || '无'
+    },
     // 导出
     exportExcel() {
       import('@/vendor/Export2Excel').then(excel => {

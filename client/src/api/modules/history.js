@@ -12,5 +12,9 @@ export default {
   // 查询统计聚合
   historySum(params) {
     return api({ url: 'api/history/sum', params, method: 'post' })
+  },
+  // 查询历史信息（个人向）
+  historyFindOne(params) {
+    return api({ url: 'api/history/findForOne', params, method: 'post' })
   }
 }

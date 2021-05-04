@@ -161,10 +161,10 @@
             :data="tableData"
             style="width: 100%"
           >
-            <el-table-column label="时间" prop="date" />
-            <el-table-column label="楼层" prop="floor" />
-            <el-table-column label="座位号" prop="id" />
-            <el-table-column label="备注" prop="remark" />
+            <el-table-column label="时间" prop="option_time" />
+            <el-table-column label="楼层" prop="seat_storey" />
+            <el-table-column label="座位号" prop="seat_id" />
+            <el-table-column label="学院" prop="user_college" />
           </el-table>
           <!-- table end -->
         </el-collapse-item>
@@ -176,6 +176,7 @@
 <script>
 import myfilters from '@/components/myfilters'
 import Mydrawer from './components/drawer/mydrawer.vue'
+import common from '../../utils/gettime'
 // import { getPeopleInfo, getSeatInfo } from '@/api/baseData/baseData'
 import api from '@/api'
 
@@ -359,6 +360,14 @@ export default {
             type: 'success'
           })
         }
+      })
+      api.historyFindOne({ user_school_id: this.school_id }).then(res => {
+        for (let index = 0; index < res.item.length; index++) {
+            const element = res.item[index];
+            // console.log(common(element.option_time))
+            res.item[index].option_time = common(element.option_time)
+          }
+          this.tableData = res.item
       })
     }
   }

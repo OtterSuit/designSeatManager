@@ -116,9 +116,7 @@
           <span class="title">学院申请人数统计</span>
           <el-table :data="tableData" style="width: 100%">
             <el-table-column prop="_id" label="学院" />
-            <el-table-column prop="thisWeek" label="本周人次" />
-            <el-table-column prop="lastWeek" label="上周人次" width="120" />
-            <el-table-column prop="increase" label="增长率" :formatter="increase" />
+            <el-table-column prop="num_tutorial" label="申请总人数" />
           </el-table>
         </div>
       </el-col>
@@ -197,7 +195,7 @@ export default {
         left: 'auto',
         itemHeight: 9,
         icon: 'circle',
-        data: ['占座', '空座']
+        data: ['使用中','空闲中']
       },
       opinion2: {
         left: 'auto',
@@ -208,7 +206,7 @@ export default {
         icon: 'circle',
         data: ['完好', '损坏']
       },
-      seatRealtime: [],
+      seatRealtime: [0],
       seatSituation: [],
       radius: ['50%', '70%'],
       style: {
@@ -267,6 +265,84 @@ export default {
         }
       }
       this.$set(this.floorCount[0], 'data', tempData)
+    })
+    // 座位实时统计
+    // 数据处理：_id和number使用map和reduce方法重新构造新数组 name，value形式
+    api.sumSeat().then(res => {
+      let nowSeat = [] // 使用空闲饼状图中转变量
+      let number = [] // 中转变量
+      let nameArray = [] // 中转变量
+      let badSeat = [] // 坏椅子
+      let numberBadSeat = []
+      let nameBadArray = []
+      const fields = ["name"];
+      for (let index = 0; index < res.length; index++) {
+        const element = res[index];
+        if (element._id === '0' || element._id === '1') {
+           nowSeat.push(element)
+           badSeat.push(element)
+        } else if (element._id === '3') {
+           badSeat.push(element)
+        }
+      }
+      for(let i=0;i<badSeat.length;i++){
+        numberBadSeat.push(badSeat[i].num_tutorial)
+      }
+      for(let i=0;i<badSeat.length;i++){
+        if(badSeat[i]._id !== '3') {
+          nameBadArray.push('完好')
+        } else {
+          nameBadArray.push('损坏')
+        }
+      }
+      let resultBad = nameBadArray.map(arr => {
+       return fields.reduce((obj, name, i) => {
+        obj[name] = arr[0]+arr[1];
+        return obj;
+      }, {})
+    })
+    for (let index = 0; index < numberBadSeat.length; index++) {
+       resultBad[index]['value'] = numberBadSeat[index]
+    }
+      // resultBad[0]['value'] = numberBadSeat[0]
+      // resultBad[1]['value'] = numberBadSeat[1]
+      // resultBad[2]['value'] = numberBadSeat[2]
+      this.seatSituation = resultBad
+      console.log(numberBadSeat)
+      console.log(nameBadArray)
+      console.log(resultBad)
+
+      //////////////////////座位实时
+      for(let i=0;i<nowSeat.length;i++){
+        number.push(nowSeat[i].num_tutorial)
+      }
+      for(let i=0;i<nowSeat.length;i++){
+        if(nowSeat[i]._id === '0') {
+          nameArray.push('空闲中')
+        } else {
+          nameArray.push('使用中')
+        }
+      }
+      let result = nameArray.map(arr => {
+       return fields.reduce((obj, name, i) => {
+        obj[name] = arr[0]+arr[1]+arr[2];
+        return obj;
+      }, {})
+    })
+      for (let index = 0; index < number.length; index++) {
+        result[index]['value'] = number[index]
+      }
+      // result[0]['value'] = number[0]
+      // result[1]['value'] = number[1]
+      this.seatRealtime = result
+      console.log(result)
+      console.log(number)
+      console.log(nameArray)
+      console.log(this.seatRealtime)
+      
+    })
+    api.historySum({ type: 'college' }).then(res => {
+        this.tableData = res
     })
 
     // 拿到全部历史记录

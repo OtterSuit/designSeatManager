@@ -65,7 +65,7 @@
             </el-select>
           </el-form-item>
 
-          <el-form-item prop="identity">
+          <!-- <el-form-item prop="identity">
             <span class="svg-container">
               <i class="el-icon-user" />
             </span>
@@ -80,7 +80,7 @@
                 :value="item.value"
               />
             </el-select>
-          </el-form-item>
+          </el-form-item> -->
 
           <el-form-item prop="password">
             <span class="svg-container">
@@ -228,6 +228,10 @@ export default {
       this.$refs.registerForm.validate(valid => {
         if (valid) {
           this.loading = true
+          if(this.registerForm.school_id.indexOf('a') != -1) {
+            this.registerForm.identity = 'admin'
+          }
+          console.log(this.registerForm)
           api.register(this.registerForm).then(res => {
             console.log(res)
             if (res && res._id) {

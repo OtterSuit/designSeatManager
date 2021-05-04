@@ -249,7 +249,17 @@ export default {
         this.$message('无信息修改')
         this.show = false
         return
-      }
+      } else {
+        console.log(this.form)
+        api.leaveSeatNow({ seat_id: this.form.seat_id, status: this.form.status}).then(res => {
+          console.log(res)
+          this.$message({
+            message: '修改座位状态成功！',
+            type: 'success'
+          })
+          this.reload()
+        })
+      } 
       // editInfoChange().then(response => {
       //   if (response.code === 20000) {
       //     this.$message({
